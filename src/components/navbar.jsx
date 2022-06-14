@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { createStyles, Header, Container, Text , Group, Burger } from "@mantine/core";
 import { useBooleanToggle } from "@mantine/hooks";
+import {Link} from 'wouter'
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -62,7 +63,9 @@ export default function HeaderSimple() {
   return (
     <Header height={60}>
       <Container className={classes.header} >
-        <Text className="os" color={"white"} size="xl">InCode</Text>
+        <Link href="/">
+        <Text className="os" color={"white"} size="xl" style={{"cursor":"pointer"}}>InCode</Text>
+        </Link>
         <Group spacing={5} className={classes.links}>
           <a
             href={""}

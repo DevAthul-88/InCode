@@ -1,5 +1,13 @@
-import React from 'react';
-import { createStyles, Card, Text, SimpleGrid, UnstyledButton, Anchor, Group } from '@mantine/core';
+import React from "react";
+import {
+  createStyles,
+  Card,
+  Text,
+  SimpleGrid,
+  UnstyledButton,
+  Anchor,
+  Group,
+} from "@mantine/core";
 import {
   CreditCard,
   BuildingBank,
@@ -10,23 +18,27 @@ import {
   Report,
   CashBanknote,
   Coin,
-} from 'tabler-icons-react';
+} from "tabler-icons-react";
+import Navbar from "../components/navbar";
 
 const mockdata = [
-  { title: 'Credit cards', icon: CreditCard, color: 'violet' },
-  { title: 'Banks nearby', icon: BuildingBank, color: 'indigo' },
-  { title: 'Transfers', icon: Repeat, color: 'blue' },
-  { title: 'Refunds', icon: ReceiptRefund, color: 'green' },
-  { title: 'Receipts', icon: Receipt, color: 'teal' },
-  { title: 'Taxes', icon: ReceiptTax, color: 'cyan' },
-  { title: 'Reports', icon: Report, color: 'pink' },
-  { title: 'Payments', icon: Coin, color: 'red' },
-  { title: 'Cashback', icon: CashBanknote, color: 'orange' },
+  { title: "Bootstrap", icon: CreditCard, color: "violet" },
+  { title: "Banks nearby", icon: BuildingBank, color: "indigo" },
+  { title: "Transfers", icon: Repeat, color: "blue" },
+  { title: "Refunds", icon: ReceiptRefund, color: "green" },
+  { title: "Receipts", icon: Receipt, color: "teal" },
+  { title: "Taxes", icon: ReceiptTax, color: "cyan" },
+  { title: "Reports", icon: Report, color: "pink" },
+  { title: "Payments", icon: Coin, color: "red" },
+  { title: "Cashback", icon: CashBanknote, color: "orange" },
 ];
 
 const useStyles = createStyles((theme) => ({
   card: {
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[6]
+        : theme.colors.gray[0],
   },
 
   title: {
@@ -35,19 +47,20 @@ const useStyles = createStyles((theme) => ({
   },
 
   item: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
     borderRadius: theme.radius.md,
     height: 90,
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-    transition: 'box-shadow 150ms ease, transform 100ms ease',
+    backgroundColor:
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+    transition: "box-shadow 150ms ease, transform 100ms ease",
 
-    '&:hover': {
+    "&:hover": {
       boxShadow: `${theme.shadows.md} !important`,
-      transform: 'scale(1.05)',
+      transform: "scale(1.05)",
     },
   },
 }));
@@ -65,16 +78,16 @@ export default function ActionsGrid() {
   ));
 
   return (
-    <Card withBorder radius="md" className={classes.card}>
-      <Group position="apart">
-        <Text className={classes.title}>Services</Text>
-        <Anchor size="xs" color="dimmed" sx={{ lineHeight: 1 }}>
-          + 21 other services
-        </Anchor>
-      </Group>
-      <SimpleGrid cols={3} mt="md">
-        {items}
-      </SimpleGrid>
-    </Card>
+    <>
+      <Navbar />
+      <Card withBorder className={classes.card} mt="xl">
+        <Group position="apart">
+          <Text className={classes.title}>Select Framework/Library</Text>
+        </Group>
+        <SimpleGrid cols={3} mt="md">
+          {items}
+        </SimpleGrid>
+      </Card>
+    </>
   );
 }

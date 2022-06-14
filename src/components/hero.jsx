@@ -88,16 +88,16 @@ export default function HeroTitle() {
     <div className={classes.wrapper}>
       <Container  className={classes.inner}>
         <h1 className={classes.title}>
-          A{' '}
+          Create{' '}
           <Text component="span" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} inherit>
             fully featured
           </Text>{' '}
-          React components and hooks library
+          Static websites easily and faster
         </h1>
 
         <Text className={classes.description} color="dimmed">
-          Build fully functional accessible web applications with ease – Mantine includes more than
-          100 customizable components and hooks to cover you in any situation
+          With InCode you can create your own static website faster and more efficiently.
+          Export it or save it so you can use it anywhere anytime you like.
         </Text>
 
         <Group className={classes.controls}>
