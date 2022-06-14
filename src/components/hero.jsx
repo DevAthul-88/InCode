@@ -1,5 +1,6 @@
 import React from 'react';
 import { createStyles, Container, Text, Button, Group, useMantineTheme } from '@mantine/core';
+import {Link} from "wouter"
 
 const BREAKPOINT = '@media (max-width: 755px)';
 
@@ -100,6 +101,7 @@ export default function HeroTitle() {
         </Text>
 
         <Group className={classes.controls}>
+          <Link href="/start">
           <Button
             size="xl"
             className={classes.control}
@@ -108,6 +110,7 @@ export default function HeroTitle() {
           >
             Get started
           </Button>
+          </Link>
 
           <Button
             component="a"

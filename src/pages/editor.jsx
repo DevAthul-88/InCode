@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   AppShell,
-  Navbar,
+  Select,
   Header,
   TextInput,
   Textarea,
@@ -11,9 +11,8 @@ import {
 import {
   createStyles,
   Container,
-  Grid,
+  Kbd,
   Group,
-  Burger,
   Button,
   Modal,
 } from "@mantine/core";
@@ -74,13 +73,14 @@ const useStyles = createStyles((theme) => ({
 
 export default function Editor() {
   const [opened, setOpened] = useState(false);
-  const secondTabRef = useRef();
   const { classes, cx } = useStyles();
   const [htmls, setHtml] = useState("");
   const [jss, setJs] = useState("");
   const [csss, setCss] = useState("");
   const [srcDoc, setSrcDoc] = useState("");
-  const [tabsState, setTabsState] = useState("html");
+  const [run, setRun] = useState(1);
+  const [value, setValue] = useState("");
+  const [theme , setTheme] = useState("dark")
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSrcDoc(`
@@ -93,7 +93,8 @@ export default function Editor() {
     }, 250);
 
     return () => clearTimeout(timeout);
-  }, [htmls, csss, jss]);
+  }, [run]);
+
   return (
     <AppShell
       padding="md"
@@ -105,6 +106,15 @@ export default function Editor() {
             </Text>
 
             <Group spacing={5} className={classes.links}>
+              <Button
+                leftIcon={<PlayerPlay />}
+                variant="subtle"
+                onClick={() => {
+                  setRun(run + 1);
+                }}
+              >
+                Run
+              </Button>
               <Button leftIcon={<Upload />} variant="subtle">
                 Save
               </Button>
@@ -129,53 +139,59 @@ export default function Editor() {
         },
       })}
     >
-      <Tabs variant="outline">
-        <Tabs.Tab label="Settings" icon={<BrandHtml5 size={16} />} />
-        <Tabs.Tab label="Messages" icon={<BrandCss3 size={16} />} />
-        <Tabs.Tab label="Gallery" icon={<BrandJavascript size={16} />} />
-      </Tabs>
+      <Text color="#fff" align="center">
+        <Kbd>ctrl</Kbd> + <Kbd>s</Kbd> To Run The Code
+      </Text>
 
-      <Grid gutter={"xs"}>
-        <Grid.Col span={4}>
+      <Tabs variant="outline">
+        <Tabs.Tab label="HTML" icon={<BrandHtml5 size={16} />} tabKey="html">
           <CodeMirror
-            value=""
+            value={htmls}
             height="200px"
-            theme={"dark"}
+            theme={theme}
             extensions={[html()]}
             onChange={(value, viewUpdate) => {
               setHtml(value);
             }}
             placeholder="HTML"
             minHeight="300px"
+            style={{ fontSize: value }}
           />
-        </Grid.Col>
-        <Grid.Col span={4}>
+        </Tabs.Tab>
+        <Tabs.Tab label="CSS" icon={<BrandCss3 size={16} />} tabKey="css">
           <CodeMirror
-            value=""
+            value={csss}
             height="200px"
-            theme={"dark"}
+            theme={theme}
             extensions={[css()]}
             onChange={(value, viewUpdate) => {
               setCss(value);
             }}
             placeholder="CSS"
             minHeight="300px"
+            style={{ fontSize: value }}
           />
-        </Grid.Col>
-        <Grid.Col span={4}>
+        </Tabs.Tab>
+        <Tabs.Tab
+          label="JAVASCRIPT"
+          icon={<BrandJavascript size={16} />}
+          tabKey="js"
+        >
           <CodeMirror
-            value=""
+            value={jss}
             height="200px"
-            theme={"dark"}
+            theme={theme}
             extensions={[javascript()]}
             onChange={(value, viewUpdate) => {
               setJs(value);
             }}
             placeholder="JAVASCRIPT"
             minHeight="300px"
+            style={{ fontSize: value }}
           />
-        </Grid.Col>
-      </Grid>
+        </Tabs.Tab>
+      </Tabs>
+
       <div className="pane">
         <iframe
           srcDoc={srcDoc}
@@ -194,14 +210,33 @@ export default function Editor() {
           onClose={() => setOpened(false)}
           title="Settings"
         >
-          <Text>Layout</Text>
+          <Text>Meta Data</Text>
+          <TextInput label="Title" mt="sm" />
+          <Textarea label="Description" mt="sm" />
           <br />
-          <Group>
-            <Button variant="gradient">Classic</Button>
-            <Button variant="gradient">Columns</Button>
-            <Button variant="gradient">Right Results</Button>
-            <Button variant="gradient">Tabs</Button>
-          </Group>
+          <Button variant="gradient">Save</Button>
+
+          <Text mt="sm">Font Size</Text>
+
+          <Select
+            mt="sm"
+            placeholder="Pick one"
+            searchable
+            nothingFound="No options"
+            data={["12px", "15px", "18px", "22px"]}
+            onChange={setValue}
+          />
+
+          <Text mt="sm">Theme</Text>
+
+          <Select
+            mt="sm"
+            placeholder="Pick one"
+            searchable
+            nothingFound="No options"
+            data={["dark" , "light"]}
+            onChange={setTheme}
+          />
         </Modal>
       </>
     </AppShell>
