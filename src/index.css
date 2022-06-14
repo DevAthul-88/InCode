@@ -14,10 +14,11 @@ body {
     font-family: 'Oswald', sans-serif;
 }
 
-.pane {
-    height: 50vh;
+iframe {
+     height: 50vh;
+     width: 100%;
     display: flex;
     background: #fff;
-    resize: both;
+    resize:horizontal;
     overflow: auto;
 }

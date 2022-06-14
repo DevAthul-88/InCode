@@ -6,8 +6,8 @@ import {
   TextInput,
   Textarea,
   Text,
-  Image,
 } from "@mantine/core";
+
 import {
   createStyles,
   Container,
@@ -15,6 +15,7 @@ import {
   Group,
   Burger,
   Button,
+  Modal,
 } from "@mantine/core";
 import {
   PlayerPlay,
@@ -72,6 +73,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function Editor() {
+  const [opened, setOpened] = useState(false);
   const secondTabRef = useRef();
   const { classes, cx } = useStyles();
   const [htmls, setHtml] = useState("");
@@ -95,17 +97,6 @@ export default function Editor() {
   return (
     <AppShell
       padding="md"
-      navbar={
-        <Navbar width={{ base: 200 }} height="100vh" p="xs">
-          <Text color="white">Fiddle meta</Text>
-          <br />
-          <TextInput label="Title" />
-          <br />
-          <Textarea label="Description" />
-          <br />
-          <Button variant="gradient">Save</Button>
-        </Navbar>
-      }
       header={
         <Header height={60}>
           <Container className={classes.header}>
@@ -114,13 +105,14 @@ export default function Editor() {
             </Text>
 
             <Group spacing={5} className={classes.links}>
-              <Button leftIcon={<PlayerPlay />} variant="subtle">
-                Run
-              </Button>
               <Button leftIcon={<Upload />} variant="subtle">
                 Save
               </Button>
-              <Button leftIcon={<Settings />} variant="subtle">
+              <Button
+                leftIcon={<Settings />}
+                variant="subtle"
+                onClick={() => setOpened(true)}
+              >
                 Settings
               </Button>
               <Button variant="subtle">SignIn</Button>
@@ -137,6 +129,12 @@ export default function Editor() {
         },
       })}
     >
+      <Tabs variant="outline">
+        <Tabs.Tab label="Settings" icon={<BrandHtml5 size={16} />} />
+        <Tabs.Tab label="Messages" icon={<BrandCss3 size={16} />} />
+        <Tabs.Tab label="Gallery" icon={<BrandJavascript size={16} />} />
+      </Tabs>
+
       <Grid gutter={"xs"}>
         <Grid.Col span={4}>
           <CodeMirror
@@ -188,6 +186,24 @@ export default function Editor() {
           height="100%"
         />
       </div>
+
+      <>
+        <Modal
+          size={"lg"}
+          opened={opened}
+          onClose={() => setOpened(false)}
+          title="Settings"
+        >
+          <Text>Layout</Text>
+          <br />
+          <Group>
+            <Button variant="gradient">Classic</Button>
+            <Button variant="gradient">Columns</Button>
+            <Button variant="gradient">Right Results</Button>
+            <Button variant="gradient">Tabs</Button>
+          </Group>
+        </Modal>
+      </>
     </AppShell>
   );
 }
