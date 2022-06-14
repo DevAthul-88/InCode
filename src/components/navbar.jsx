@@ -67,14 +67,22 @@ export default function HeaderSimple() {
         <Text className="os" color={"white"} size="xl" style={{"cursor":"pointer"}}>InCode</Text>
         </Link>
         <Group spacing={5} className={classes.links}>
-          <a
-            href={""}
+        <Link
+            href={"/signin"}
+            className={cx(classes.link, {
+              [classes.linkActive]: "active" === null,
+            })}
+          >
+            SignIn
+          </Link>
+          <Link
+            href={"/signup"}
             className={cx(classes.link, {
               [classes.linkActive]: "active" === null,
             })}
           >
             SignUp
-          </a>
+          </Link>
         </Group>
         <Burger
           opened={opened}
