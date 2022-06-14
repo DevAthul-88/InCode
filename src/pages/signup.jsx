@@ -45,6 +45,11 @@ export default function AuthenticationTitle() {
       setLocation("/signin");
     }
   };
+  React.useEffect(() => {
+    if(db.auth.user){
+      setLocation("/start")
+    }
+  },[])
   return (
     <>
       <Navbar />

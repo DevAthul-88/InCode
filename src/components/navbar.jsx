@@ -1,7 +1,17 @@
 import React, { useState } from "react";
-import { createStyles, Header, Container, Text , Group, Burger } from "@mantine/core";
+import {
+  createStyles,
+  Header,
+  Container,
+  Text,
+  Group,
+  Menu,
+  Burger,
+} from "@mantine/core";
 import { useBooleanToggle } from "@mantine/hooks";
-import {Link} from 'wouter'
+import { Link } from "wouter";
+import db from "../db/db";
+import {User , Logout} from 'tabler-icons-react'
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -62,28 +72,49 @@ export default function HeaderSimple() {
 
   return (
     <Header height={60}>
-      <Container className={classes.header} >
+      <Container className={classes.header}>
         <Link href="/">
-        <Text className="os" color={"white"} size="xl" style={{"cursor":"pointer"}}>InCode</Text>
+          <Text
+            className="os"
+            color={"white"}
+            size="xl"
+            style={{ cursor: "pointer" }}
+          >
+            InCode
+          </Text>
         </Link>
-        <Group spacing={5} className={classes.links}>
-        <Link
-            href={"/signin"}
-            className={cx(classes.link, {
-              [classes.linkActive]: "active" === null,
-            })}
-          >
-            SignIn
-          </Link>
-          <Link
-            href={"/signup"}
-            className={cx(classes.link, {
-              [classes.linkActive]: "active" === null,
-            })}
-          >
-            SignUp
-          </Link>
-        </Group>
+        {db.auth.user !== null && db.auth.user !== undefined ? (
+          <Group>
+            <Menu
+            
+          transition="rotate-right"
+          transitionDuration={100}
+          transitionTimingFunction="ease"
+        >
+          <Menu.Item icon={<User size={14} />}>Profile</Menu.Item>
+          <Menu.Item icon={<Logout size={14} />}>Logout</Menu.Item>
+        </Menu>
+          </Group>
+        ) : (
+          <Group spacing={5} className={classes.links}>
+            <Link
+              href={"/signin"}
+              className={cx(classes.link, {
+                [classes.linkActive]: "active" === null,
+              })}
+            >
+              SignIn
+            </Link>
+            <Link
+              href={"/signup"}
+              className={cx(classes.link, {
+                [classes.linkActive]: "active" === null,
+              })}
+            >
+              SignUp
+            </Link>
+          </Group>
+        )}
         <Burger
           opened={opened}
           onClick={() => toggleOpened()}
