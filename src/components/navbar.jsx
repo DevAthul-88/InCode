@@ -91,7 +91,6 @@ export default function HeaderSimple() {
           transitionDuration={100}
           transitionTimingFunction="ease"
         >
-          <Menu.Item icon={<User size={14} />}>Profile</Menu.Item>
           <Menu.Item icon={<Logout size={14} />}>Logout</Menu.Item>
         </Menu>
           </Group>

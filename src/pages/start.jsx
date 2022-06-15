@@ -21,6 +21,9 @@ export default function ActionsGrid() {
   const [location, setLocation] = useLocation();
   document.title = "InCode - Start Project";
   React.useEffect(() => {
+    if(!db.auth?.user()){
+      setLocation("/login")
+    }
     async function fetchProject() {
       try {
         const { error, data } = await db
@@ -88,7 +91,7 @@ export default function ActionsGrid() {
           Recent Activity
         </Title>
         <Status
-          title={project.length == 0 ? "No Projects Found." : null}
+          title={project.length == 0 ? "No Projects Found." : "Select a project to continue"}
           description={null}
           data={project}
         />

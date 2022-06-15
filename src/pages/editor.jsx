@@ -41,6 +41,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Device from "../components/device";
 import Footer from "../components/footer";
+import {useLocation} from 'wouter'
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -96,7 +97,11 @@ export default function Editor({ id }) {
   const [theme, setTheme] = useState("dark");
   const [device, setDevice] = useState("device-iphone-x");
   const [loading, setLoading] = useState(false);
-
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [metaLoading , setMetaLoading] = useState(false);
+  const [saveLoading , setSaveLoading] = useState(false);
+  const [location, setLocation] = useLocation();
   async function fetchProject() {
     try {
       setLoading(true);
@@ -118,8 +123,12 @@ export default function Editor({ id }) {
         setHtml(data && data[0].html);
         setCss(data && data[0].css);
         setJs(data && data[0].js);
-        console.log(data);
+        setTitle(data && data[0].title);
+        setDescription(data && data[0].description);;
         setLoading(false);
+        if(data[0].userId !== db.auth?.user()?.id){
+          setLocation("/start")
+        }
       }
     } catch (error) {
       toast(error.message, {
@@ -137,6 +146,9 @@ export default function Editor({ id }) {
   }
   useEffect(() => {
     fetchProject();
+    if(!db.auth?.user()){
+      setLocation("/login")
+    }
   }, []);
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -154,6 +166,7 @@ export default function Editor({ id }) {
 
   async function saveProject() {
     try {
+      setSaveLoading(true)
       const { data, error } = await db
         .from("code")
         .update({ html: htmls, css: csss, js: jss })
@@ -170,6 +183,7 @@ export default function Editor({ id }) {
           theme: "dark",
           type: "error",
         });
+        setSaveLoading(false)
       }
       if (data) {
         toast("Project saved!", {
@@ -183,6 +197,7 @@ export default function Editor({ id }) {
           theme: "dark",
           type: "success",
         });
+        setSaveLoading(false)
       }
     } catch (error) {
       toast(error.message, {
@@ -196,285 +211,347 @@ export default function Editor({ id }) {
         theme: "dark",
         type: "error",
       });
+      setSaveLoading(false)
+    }
+  }
+
+  const handleChange = async (e) => {
+    e.preventDefault();
+    try {
+      setMetaLoading(true)
+      const { data, error } = await db
+        .from("code")
+        .update({ title:title , description:description })
+        .match({ id: id });
+      if (error) {
+        toast(error.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          type: "error",
+        });
+        setMetaLoading(false)
+      }
+      if (data) {
+        toast("Title and description are changed!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          type: "success",
+        });
+        setMetaLoading(false)
+      }
+    } catch (error) {
+      toast(error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        type: "error",
+      });
+      setMetaLoading(false)
     }
   }
 
   return (
     <>
-    <AppShell
-      padding="md"
-      header={
-        <Header height={60}>
-          <Container className={classes.header}>
-            <Text size="xl" className="os" color={"white"}>
-              InCode
+      <AppShell
+        padding="md"
+        header={
+          <Header height={60}>
+            <Container className={classes.header}>
+              <Link href="/start">
+              <Text size="xl" className="os" color={"white"} style={{"cursor":"pointer"}}>
+                InCode
+              </Text>
+              </Link>
+
+              <Group spacing={5} className={classes.links}>
+                <Button
+                  leftIcon={<PlayerPlay />}
+                  variant="subtle"
+                  onClick={() => {
+                    setRun(run + 1);
+                  }}
+                >
+                  Run
+                </Button>
+                <Button
+                  leftIcon={<Upload />}
+                  variant="subtle"
+                  onClick={saveProject}
+                  loading={saveLoading}
+                >
+                  Save
+                </Button>
+                <Button
+                  leftIcon={<Settings />}
+                  variant="subtle"
+                  onClick={() => setOpened(true)}
+                >
+                  Settings
+                </Button>
+                {db.auth.user !== null && db.auth.user !== undefined ? (
+                  <Group>
+                    <Menu
+                      transition="rotate-right"
+                      transitionDuration={100}
+                      transitionTimingFunction="ease"
+                    >
+                      <Menu.Item icon={<Logout size={14} />}>Logout</Menu.Item>
+                    </Menu>
+                  </Group>
+                ) : (
+                  <Group spacing={5} className={classes.links}>
+                    <Link
+                      href={"/signin"}
+                      className={cx(classes.link, {
+                        [classes.linkActive]: "active" === null,
+                      })}
+                    >
+                      SignIn
+                    </Link>
+                    <Link
+                      href={"/signup"}
+                      className={cx(classes.link, {
+                        [classes.linkActive]: "active" === null,
+                      })}
+                    >
+                      SignUp
+                    </Link>
+                  </Group>
+                )}
+              </Group>
+            </Container>
+          </Header>
+        }
+        styles={(theme) => ({
+          main: {
+            backgroundColor:
+              theme.colorScheme === "dark"
+                ? theme.colors.dark[8]
+                : theme.colors.gray[0],
+          },
+        })}
+      >
+        {loading ? (
+          <Center>
+            <Loader size="lg" />
+          </Center>
+        ) : (
+          <>
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
+            <Text color="#fff" align="center">
+              <Kbd>ctrl</Kbd> + <Kbd>s</Kbd> To Run The Code
             </Text>
 
-            <Group spacing={5} className={classes.links}>
-              <Button
-                leftIcon={<PlayerPlay />}
-                variant="subtle"
-                onClick={() => {
-                  setRun(run + 1);
-                }}
+            <Tabs variant="outline" mt="sm">
+              <Tabs.Tab
+                label="HTML"
+                icon={<BrandHtml5 size={16} />}
+                tabKey="html"
               >
-                Run
-              </Button>
-              <Button
-                leftIcon={<Upload />}
-                variant="subtle"
-                onClick={saveProject}
+                <CodeMirror
+                  value={htmls}
+                  height="200px"
+                  theme={theme}
+                  extensions={[html()]}
+                  onChange={(value, viewUpdate) => {
+                    setHtml(value);
+                  }}
+                  placeholder="HTML"
+                  minHeight="300px"
+                  style={{ fontSize: value }}
+                />
+                <div>
+                  <iframe
+                    className="pane"
+                    srcDoc={srcDoc}
+                    title="output"
+                    sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+                    frameBorder="0"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+              </Tabs.Tab>
+              <Tabs.Tab label="CSS" icon={<BrandCss3 size={16} />} tabKey="css">
+                <CodeMirror
+                  value={csss}
+                  height="200px"
+                  theme={theme}
+                  extensions={[css()]}
+                  onChange={(value, viewUpdate) => {
+                    setCss(value);
+                  }}
+                  placeholder="CSS"
+                  minHeight="300px"
+                  style={{ fontSize: value }}
+                />
+                <div>
+                  <iframe
+                    className="pane"
+                    srcDoc={srcDoc}
+                    title="output"
+                    sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+                    frameBorder="0"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+              </Tabs.Tab>
+              <Tabs.Tab
+                label="JAVASCRIPT"
+                icon={<BrandJavascript size={16} />}
+                tabKey="js"
               >
-                Save
-              </Button>
-              <Button
-                leftIcon={<Settings />}
-                variant="subtle"
-                onClick={() => setOpened(true)}
+                <CodeMirror
+                  value={jss}
+                  height="200px"
+                  theme={theme}
+                  extensions={[javascript()]}
+                  onChange={(value, viewUpdate) => {
+                    setJs(value);
+                  }}
+                  placeholder="JAVASCRIPT"
+                  minHeight="300px"
+                  style={{ fontSize: value }}
+                />
+                <div>
+                  <iframe
+                    srcDoc={srcDoc}
+                    className="pane"
+                    title="output"
+                    sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+                    frameBorder="0"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+              </Tabs.Tab>
+              <Tabs.Tab
+                label="FULL PREVIEW"
+                icon={<PageBreak size={16} />}
+                tabKey="full"
               >
-                Settings
-              </Button>
-              {db.auth.user !== null && db.auth.user !== undefined ? (
-                <Group>
-                  <Menu
-                    transition="rotate-right"
-                    transitionDuration={100}
-                    transitionTimingFunction="ease"
-                  >
-                    <Menu.Item icon={<User size={14} />}>Profile</Menu.Item>
-                    <Menu.Item icon={<Logout size={14} />}>Logout</Menu.Item>
-                  </Menu>
-                </Group>
-              ) : (
-                <Group spacing={5} className={classes.links}>
-                  <Link
-                    href={"/signin"}
-                    className={cx(classes.link, {
-                      [classes.linkActive]: "active" === null,
-                    })}
-                  >
-                    SignIn
-                  </Link>
-                  <Link
-                    href={"/signup"}
-                    className={cx(classes.link, {
-                      [classes.linkActive]: "active" === null,
-                    })}
-                  >
-                    SignUp
-                  </Link>
-                </Group>
-              )}
-            </Group>
-          </Container>
-        </Header>
-      }
-      styles={(theme) => ({
-        main: {
-          backgroundColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[8]
-              : theme.colors.gray[0],
-        },
-      })}
-    >
-      {loading ? (
-        <Center>
-          <Loader size="lg" />
-        </Center>
-      ) : (
-        <>
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-          <Text color="#fff" align="center">
-            <Kbd>ctrl</Kbd> + <Kbd>s</Kbd> To Run The Code
-          </Text>
-
-          <Tabs variant="outline" mt="sm">
-            <Tabs.Tab
-              label="HTML"
-              icon={<BrandHtml5 size={16} />}
-              tabKey="html"
-            >
-              <CodeMirror
-                value={htmls}
-                height="200px"
-                theme={theme}
-                extensions={[html()]}
-                onChange={(value, viewUpdate) => {
-                  setHtml(value);
-                }}
-                placeholder="HTML"
-                minHeight="300px"
-                style={{ fontSize: value }}
-              />
-              <div>
-                <iframe
-                  className="pane"
-                  srcDoc={srcDoc}
-                  title="output"
-                  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-                  frameBorder="0"
-                  width="100%"
-                  height="100%"
+                <div>
+                  <iframe
+                    className="panes"
+                    srcDoc={srcDoc}
+                    title="output"
+                    sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+                    frameBorder="0"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+              </Tabs.Tab>
+              <Tabs.Tab
+                label="DEVICE PREVIEW"
+                icon={<DeviceMobile size={16} />}
+                tabKey="device"
+              >
+                <Select
+                  mt="md"
+                  placeholder="Select a device"
+                  searchable
+                  nothingFound="No options"
+                  data={[
+                    "device-iphone-x",
+                    "device-iphone-8",
+                    "device-google-pixel-2-xl",
+                    "device-google-pixel",
+                    "device-galaxy-s8",
+                    "device-ipad-pro",
+                    "device-surface-pro",
+                    "device-surface-book",
+                    "device-macbook-pro",
+                    "device-macbook",
+                    "device-surface-studio",
+                    "device-imac-pro",
+                    "device-apple-watch",
+                  ]}
+                  onChange={setDevice}
                 />
-              </div>
-            </Tabs.Tab>
-            <Tabs.Tab label="CSS" icon={<BrandCss3 size={16} />} tabKey="css">
-              <CodeMirror
-                value={csss}
-                height="200px"
-                theme={theme}
-                extensions={[css()]}
-                onChange={(value, viewUpdate) => {
-                  setCss(value);
-                }}
-                placeholder="CSS"
-                minHeight="300px"
-                style={{ fontSize: value }}
-              />
-              <div>
-                <iframe
-                  className="pane"
-                  srcDoc={srcDoc}
-                  title="output"
-                  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-                  frameBorder="0"
-                  width="100%"
-                  height="100%"
+                <Device srcDoc={srcDoc} device={device} />
+              </Tabs.Tab>
+            </Tabs>
+
+            <>
+              <Modal
+                size={"lg"}
+                opened={opened}
+                onClose={() => setOpened(false)}
+                title="Settings"
+              >
+                <form onSubmit={handleChange}>
+                  <Text>Meta Data</Text>
+                  <TextInput label="Title" mt="sm" defaultValue={title} onChange={(e) => setTitle(e.target.value)}/>
+                  <Textarea
+                    label="Description"
+                    mt="sm"        
+                    defaultValue={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                  <br />
+                  <Button variant="gradient" type="submit" loading={metaLoading}>
+                    Save
+                  </Button>
+                </form>
+                <Text mt="sm">Font Size</Text>
+                <Select
+                  mt="sm"
+                  placeholder="Pick one"
+                  searchable
+                  nothingFound="No options"
+                  data={["12px", "15px", "18px", "22px"]}
+                  onChange={setValue}
                 />
-              </div>
-            </Tabs.Tab>
-            <Tabs.Tab
-              label="JAVASCRIPT"
-              icon={<BrandJavascript size={16} />}
-              tabKey="js"
-            >
-              <CodeMirror
-                value={jss}
-                height="200px"
-                theme={theme}
-                extensions={[javascript()]}
-                onChange={(value, viewUpdate) => {
-                  setJs(value);
-                }}
-                placeholder="JAVASCRIPT"
-                minHeight="300px"
-                style={{ fontSize: value }}
-              />
-              <div>
-                <iframe
-                  srcDoc={srcDoc}
-                  className="pane"
-                  title="output"
-                  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-                  frameBorder="0"
-                  width="100%"
-                  height="100%"
+
+                <Text mt="sm">Theme</Text>
+
+                <Select
+                  mt="sm"
+                  placeholder="Pick one"
+                  searchable
+                  nothingFound="No options"
+                  data={["dark", "light"]}
+                  onChange={setTheme}
                 />
-              </div>
-            </Tabs.Tab>
-            <Tabs.Tab
-              label="FULL PREVIEW"
-              icon={<PageBreak size={16} />}
-              tabKey="full"
-            >
-              <div>
-                <iframe
-                  className="panes"
-                  srcDoc={srcDoc}
-                  title="output"
-                  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-                  frameBorder="0"
-                  width="100%"
-                  height="100%"
-                />
-              </div>
-            </Tabs.Tab>
-            <Tabs.Tab
-              label="DEVICE PREVIEW"
-              icon={<DeviceMobile size={16} />}
-              tabKey="device"
-            >
-              <Select
-                mt="md"
-                placeholder="Select a device"
-                searchable
-                nothingFound="No options"
-                data={[
-                  "device-iphone-x",
-                  "device-iphone-8",
-                  "device-google-pixel-2-xl",
-                  "device-google-pixel",
-                  "device-galaxy-s8",
-                  "device-ipad-pro",
-                  "device-surface-pro",
-                  "device-surface-book",
-                  "device-macbook-pro",
-                  "device-macbook",
-                  "device-surface-studio",
-                  "device-imac-pro",
-                  "device-apple-watch"
-                ]}
-                onChange={setDevice}
-              />
-              <Device srcDoc={srcDoc} device={device} />
-            </Tabs.Tab>
-          </Tabs>
 
-          <>
-            <Modal
-              size={"lg"}
-              opened={opened}
-              onClose={() => setOpened(false)}
-              title="Settings"
-            >
-              <Text>Meta Data</Text>
-              <TextInput label="Title" mt="sm" />
-              <Textarea label="Description" mt="sm" />
-              <br />
-              <Button variant="gradient">Save</Button>
-
-              <Text mt="sm">Font Size</Text>
-
-              <Select
-                mt="sm"
-                placeholder="Pick one"
-                searchable
-                nothingFound="No options"
-                data={["12px", "15px", "18px", "22px"]}
-                onChange={setValue}
-              />
-
-              <Text mt="sm">Theme</Text>
-
-              <Select
-                mt="sm"
-                placeholder="Pick one"
-                searchable
-                nothingFound="No options"
-                data={["dark", "light"]}
-                onChange={setTheme}
-              />
-             
-              <Button variant="outline" color="red" mt="sm">
-                Delete Project
-              </Button>
-            </Modal>
+                <Button variant="outline" color="red" mt="sm">
+                  Delete Project
+                </Button>
+              </Modal>
+            </>
           </>
-        </>
-      )}
-    </AppShell>
-    <Footer />
+        )}
+      </AppShell>
+      <Footer />
     </>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { createStyles, Card, Group, Switch, Text } from '@mantine/core';
+import { createStyles, Card, Group, Switch, Text , Button} from '@mantine/core';
+import {Link} from 'wouter'
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -40,7 +41,9 @@ export default function SwitchesCard({ title, description, data }) {
           {item.description}
         </Text>
       </div>
-      <Switch onLabel="ON" offLabel="OFF" className={classes.switch} size="lg" />
+      <Link href={`/editor/${item.id}`}>
+      <Button>Open Project</Button>
+      </Link>
     </Group>
   ));
 
