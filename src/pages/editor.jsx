@@ -25,6 +25,8 @@ import {
   BrandHtml5,
   BrandCss3,
   BrandJavascript,
+  DeviceMobile,
+  PageBreak,
 } from "tabler-icons-react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -37,6 +39,9 @@ import { User, Logout } from "tabler-icons-react";
 import { Loader } from "@mantine/core";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Device from "../components/device";
+import Footer from "../components/footer";
+
 const useStyles = createStyles((theme) => ({
   header: {
     display: "flex",
@@ -89,7 +94,7 @@ export default function Editor({ id }) {
   const [run, setRun] = useState(1);
   const [value, setValue] = useState("");
   const [theme, setTheme] = useState("dark");
-  const [project, setProject] = useState("");
+  const [device, setDevice] = useState("device-iphone-x");
   const [loading, setLoading] = useState(false);
 
   async function fetchProject() {
@@ -97,16 +102,37 @@ export default function Editor({ id }) {
       setLoading(true);
       const { data, error } = await db.from("code").select().eq("id", id);
       if (error) {
-        console.log(error.message);
+        toast(error.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          type: "error",
+        });
       }
       if (data) {
         setHtml(data && data[0].html);
         setCss(data && data[0].css);
         setJs(data && data[0].js);
+        console.log(data);
         setLoading(false);
       }
     } catch (error) {
-      console.log(error.message);
+      toast(error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        type: "error",
+      });
     }
   }
   useEffect(() => {
@@ -130,34 +156,34 @@ export default function Editor({ id }) {
     try {
       const { data, error } = await db
         .from("code")
-        .insert([{ html: htmls, css: csss, js: jss }])
-        .eq("id", id);
-        if(error){
-          toast(error.message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-            type: "error",
-          });
-        }
-        if(data){
-          toast("Project saved!", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-            type: "success",
-          });
-        }
+        .update({ html: htmls, css: csss, js: jss })
+        .match({ id: id });
+      if (error) {
+        toast(error.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          type: "error",
+        });
+      }
+      if (data) {
+        toast("Project saved!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          type: "success",
+        });
+      }
     } catch (error) {
       toast(error.message, {
         position: "top-right",
@@ -174,6 +200,7 @@ export default function Editor({ id }) {
   }
 
   return (
+    <>
     <AppShell
       padding="md"
       header={
@@ -272,7 +299,7 @@ export default function Editor({ id }) {
             <Kbd>ctrl</Kbd> + <Kbd>s</Kbd> To Run The Code
           </Text>
 
-          <Tabs variant="outline">
+          <Tabs variant="outline" mt="sm">
             <Tabs.Tab
               label="HTML"
               icon={<BrandHtml5 size={16} />}
@@ -290,6 +317,17 @@ export default function Editor({ id }) {
                 minHeight="300px"
                 style={{ fontSize: value }}
               />
+              <div>
+                <iframe
+                  className="pane"
+                  srcDoc={srcDoc}
+                  title="output"
+                  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+                  frameBorder="0"
+                  width="100%"
+                  height="100%"
+                />
+              </div>
             </Tabs.Tab>
             <Tabs.Tab label="CSS" icon={<BrandCss3 size={16} />} tabKey="css">
               <CodeMirror
@@ -304,6 +342,17 @@ export default function Editor({ id }) {
                 minHeight="300px"
                 style={{ fontSize: value }}
               />
+              <div>
+                <iframe
+                  className="pane"
+                  srcDoc={srcDoc}
+                  title="output"
+                  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+                  frameBorder="0"
+                  width="100%"
+                  height="100%"
+                />
+              </div>
             </Tabs.Tab>
             <Tabs.Tab
               label="JAVASCRIPT"
@@ -322,19 +371,65 @@ export default function Editor({ id }) {
                 minHeight="300px"
                 style={{ fontSize: value }}
               />
+              <div>
+                <iframe
+                  srcDoc={srcDoc}
+                  className="pane"
+                  title="output"
+                  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+                  frameBorder="0"
+                  width="100%"
+                  height="100%"
+                />
+              </div>
+            </Tabs.Tab>
+            <Tabs.Tab
+              label="FULL PREVIEW"
+              icon={<PageBreak size={16} />}
+              tabKey="full"
+            >
+              <div>
+                <iframe
+                  className="panes"
+                  srcDoc={srcDoc}
+                  title="output"
+                  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+                  frameBorder="0"
+                  width="100%"
+                  height="100%"
+                />
+              </div>
+            </Tabs.Tab>
+            <Tabs.Tab
+              label="DEVICE PREVIEW"
+              icon={<DeviceMobile size={16} />}
+              tabKey="device"
+            >
+              <Select
+                mt="md"
+                placeholder="Select a device"
+                searchable
+                nothingFound="No options"
+                data={[
+                  "device-iphone-x",
+                  "device-iphone-8",
+                  "device-google-pixel-2-xl",
+                  "device-google-pixel",
+                  "device-galaxy-s8",
+                  "device-ipad-pro",
+                  "device-surface-pro",
+                  "device-surface-book",
+                  "device-macbook-pro",
+                  "device-macbook",
+                  "device-surface-studio",
+                  "device-imac-pro",
+                  "device-apple-watch"
+                ]}
+                onChange={setDevice}
+              />
+              <Device srcDoc={srcDoc} device={device} />
             </Tabs.Tab>
           </Tabs>
-
-          <div className="pane">
-            <iframe
-              srcDoc={srcDoc}
-              title="output"
-              sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-              frameBorder="0"
-              width="100%"
-              height="100%"
-            />
-          </div>
 
           <>
             <Modal
@@ -370,10 +465,16 @@ export default function Editor({ id }) {
                 data={["dark", "light"]}
                 onChange={setTheme}
               />
+             
+              <Button variant="outline" color="red" mt="sm">
+                Delete Project
+              </Button>
             </Modal>
           </>
         </>
       )}
     </AppShell>
+    <Footer />
+    </>
   );
 }
