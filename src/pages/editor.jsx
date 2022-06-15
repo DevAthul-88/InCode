@@ -8,7 +8,7 @@ import {
   Menu,
   Text,
 } from "@mantine/core";
-
+import useKeypress from 'react-use-keypress';
 import {
   createStyles,
   Container,
@@ -104,6 +104,11 @@ export default function Editor({ id }) {
   const [saveLoading, setSaveLoading] = useState(false);
   const [location, setLocation] = useLocation();
   const [delLoading , setDelLoading] = useState(false);
+
+  useKeypress('Enter', () => {
+    setRun(run +1);
+  });
+
   async function fetchProject() {
     try {
       setLoading(true);
@@ -151,6 +156,9 @@ export default function Editor({ id }) {
     if (!db.auth.user) {
       setLocation("/signin");
     }
+
+    
+
   }, []);
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -419,7 +427,7 @@ export default function Editor({ id }) {
               pauseOnHover
             />
             <Text color="#fff" align="center">
-              <Kbd>ctrl</Kbd> + <Kbd>s</Kbd> To Run The Code
+              <Kbd>Enter</Kbd> To Run The Code
             </Text>
 
             <Tabs variant="outline" mt="sm">

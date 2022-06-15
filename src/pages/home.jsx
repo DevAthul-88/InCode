@@ -5,6 +5,7 @@ import Features from "../components/features";
 import Footer from "../components/footer";
 
 function home() {
+  document.title = "InCode - Home"
   return (
     <div>
       <Navbar />
