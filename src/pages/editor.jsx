@@ -87,6 +87,7 @@ const useStyles = createStyles((theme) => ({
 export default function Editor({ id }) {
   document.title = "InCode - Editor";
   const [opened, setOpened] = useState(false);
+  const [openeds, setOpeneds] = useState(false);
   const { classes, cx } = useStyles();
   const [htmls, setHtml] = useState("");
   const [jss, setJs] = useState("");
@@ -102,6 +103,7 @@ export default function Editor({ id }) {
   const [metaLoading, setMetaLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [location, setLocation] = useLocation();
+  const [delLoading , setDelLoading] = useState(false);
   async function fetchProject() {
     try {
       setLoading(true);
@@ -166,7 +168,7 @@ export default function Editor({ id }) {
 
   async function logout() {
     db.auth.signOut();
-    window.location.href = "/signin"
+    window.location.href = "/signin";
   }
 
   async function saveProject() {
@@ -272,6 +274,45 @@ export default function Editor({ id }) {
     }
   };
 
+ async function deleteProject(){
+    try {
+      setDelLoading(true);
+       const {data , error} = await db.from("code").delete().match({"id":id})
+       if (error) {
+        toast("Title and description are changed!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          type: "error",
+        });
+        setDelLoading(false);
+        setMetaLoading(false);
+      }
+      if(data){
+        setDelLoading(false);
+        setLocation("/start")
+      }
+    } catch (error) {
+      setDelLoading(false);
+      toast("Title and description are changed!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        type: "error",
+      });
+    }
+  }
+
   return (
     <>
       <AppShell
@@ -322,7 +363,9 @@ export default function Editor({ id }) {
                       transitionDuration={100}
                       transitionTimingFunction="ease"
                     >
-                      <Menu.Item icon={<Logout size={14} />} onClick={logout}>Logout</Menu.Item>
+                      <Menu.Item icon={<Logout size={14} />} onClick={logout}>
+                        Logout
+                      </Menu.Item>
                     </Menu>
                   </Group>
                 ) : (
@@ -562,11 +605,25 @@ export default function Editor({ id }) {
                   onChange={setTheme}
                 />
 
-                <Button variant="outline" color="red" mt="sm">
+                <Button
+                  variant="outline"
+                  color="red"
+                  mt="sm"
+                  onClick={() => setOpeneds(true)}
+                >
                   Delete Project
                 </Button>
               </Modal>
             </>
+            <Modal
+              opened={openeds}
+              onClose={() => setOpeneds(false)}
+              title="Are you sure you want to delete this project?"
+            >
+              <Group>
+                <Button color="red" onClick={deleteProject} loading={delLoading}>Yes Delete It!</Button>
+              </Group>
+            </Modal>
           </>
         )}
       </AppShell>
