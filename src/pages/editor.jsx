@@ -41,7 +41,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Device from "../components/device";
 import Footer from "../components/footer";
-import {useLocation} from 'wouter'
+import { useLocation } from "wouter";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -99,8 +99,8 @@ export default function Editor({ id }) {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [metaLoading , setMetaLoading] = useState(false);
-  const [saveLoading , setSaveLoading] = useState(false);
+  const [metaLoading, setMetaLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
   const [location, setLocation] = useLocation();
   async function fetchProject() {
     try {
@@ -124,10 +124,10 @@ export default function Editor({ id }) {
         setCss(data && data[0].css);
         setJs(data && data[0].js);
         setTitle(data && data[0].title);
-        setDescription(data && data[0].description);;
+        setDescription(data && data[0].description);
         setLoading(false);
-        if(data[0].userId !== db.auth?.user()?.id){
-          setLocation("/start")
+        if (data[0].userId !== db.auth?.user()?.id) {
+          setLocation("/start");
         }
       }
     } catch (error) {
@@ -146,8 +146,8 @@ export default function Editor({ id }) {
   }
   useEffect(() => {
     fetchProject();
-    if(!db.auth?.user()){
-      setLocation("/login")
+    if (!db.auth.user) {
+      setLocation("/signin");
     }
   }, []);
   useEffect(() => {
@@ -164,9 +164,14 @@ export default function Editor({ id }) {
     return () => clearTimeout(timeout);
   }, [run]);
 
+  async function logout() {
+    db.auth.signOut();
+    window.location.href = "/signin"
+  }
+
   async function saveProject() {
     try {
-      setSaveLoading(true)
+      setSaveLoading(true);
       const { data, error } = await db
         .from("code")
         .update({ html: htmls, css: csss, js: jss })
@@ -183,7 +188,7 @@ export default function Editor({ id }) {
           theme: "dark",
           type: "error",
         });
-        setSaveLoading(false)
+        setSaveLoading(false);
       }
       if (data) {
         toast("Project saved!", {
@@ -197,7 +202,7 @@ export default function Editor({ id }) {
           theme: "dark",
           type: "success",
         });
-        setSaveLoading(false)
+        setSaveLoading(false);
       }
     } catch (error) {
       toast(error.message, {
@@ -211,17 +216,17 @@ export default function Editor({ id }) {
         theme: "dark",
         type: "error",
       });
-      setSaveLoading(false)
+      setSaveLoading(false);
     }
   }
 
   const handleChange = async (e) => {
     e.preventDefault();
     try {
-      setMetaLoading(true)
+      setMetaLoading(true);
       const { data, error } = await db
         .from("code")
-        .update({ title:title , description:description })
+        .update({ title: title, description: description })
         .match({ id: id });
       if (error) {
         toast(error.message, {
@@ -235,7 +240,7 @@ export default function Editor({ id }) {
           theme: "dark",
           type: "error",
         });
-        setMetaLoading(false)
+        setMetaLoading(false);
       }
       if (data) {
         toast("Title and description are changed!", {
@@ -249,7 +254,7 @@ export default function Editor({ id }) {
           theme: "dark",
           type: "success",
         });
-        setMetaLoading(false)
+        setMetaLoading(false);
       }
     } catch (error) {
       toast(error.message, {
@@ -263,9 +268,9 @@ export default function Editor({ id }) {
         theme: "dark",
         type: "error",
       });
-      setMetaLoading(false)
+      setMetaLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -275,9 +280,14 @@ export default function Editor({ id }) {
           <Header height={60}>
             <Container className={classes.header}>
               <Link href="/start">
-              <Text size="xl" className="os" color={"white"} style={{"cursor":"pointer"}}>
-                InCode
-              </Text>
+                <Text
+                  size="xl"
+                  className="os"
+                  color={"white"}
+                  style={{ cursor: "pointer" }}
+                >
+                  InCode
+                </Text>
               </Link>
 
               <Group spacing={5} className={classes.links}>
@@ -312,7 +322,7 @@ export default function Editor({ id }) {
                       transitionDuration={100}
                       transitionTimingFunction="ease"
                     >
-                      <Menu.Item icon={<Logout size={14} />}>Logout</Menu.Item>
+                      <Menu.Item icon={<Logout size={14} />} onClick={logout}>Logout</Menu.Item>
                     </Menu>
                   </Group>
                 ) : (
@@ -510,15 +520,24 @@ export default function Editor({ id }) {
               >
                 <form onSubmit={handleChange}>
                   <Text>Meta Data</Text>
-                  <TextInput label="Title" mt="sm" defaultValue={title} onChange={(e) => setTitle(e.target.value)}/>
+                  <TextInput
+                    label="Title"
+                    mt="sm"
+                    defaultValue={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
                   <Textarea
                     label="Description"
-                    mt="sm"        
+                    mt="sm"
                     defaultValue={description}
                     onChange={(e) => setDescription(e.target.value)}
                   />
                   <br />
-                  <Button variant="gradient" type="submit" loading={metaLoading}>
+                  <Button
+                    variant="gradient"
+                    type="submit"
+                    loading={metaLoading}
+                  >
                     Save
                   </Button>
                 </form>

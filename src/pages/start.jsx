@@ -10,7 +10,6 @@ import { Alert } from "@mantine/core";
 import { AlertCircle } from "tabler-icons-react";
 import { useLocation } from "wouter";
 
-
 export default function ActionsGrid() {
   const [project, setProject] = React.useState([]);
   const [opened, setOpened] = useState(false);
@@ -21,9 +20,11 @@ export default function ActionsGrid() {
   const [location, setLocation] = useLocation();
   document.title = "InCode - Start Project";
   React.useEffect(() => {
-    if(!db.auth?.user()){
-      setLocation("/login")
+    if (db.auth.user() == null && db.auth.user() == undefined) {
+      setLocation("/signin");
     }
+  }, []);
+  React.useEffect(() => {
     async function fetchProject() {
       try {
         const { error, data } = await db
@@ -47,29 +48,28 @@ export default function ActionsGrid() {
     e.preventDefault();
     try {
       setLoading(true);
-      const { error, data } = await db
-        .from("code")
-        .insert([
-          {
-            title: title,
-            description: description,
-            userId: db.auth.user()?.id,
-          },
-        ]);
+      const { error, data } = await db.from("code").insert([
+        {
+          title: title,
+          description: description,
+          userId: db.auth.user()?.id,
+        },
+      ]);
 
       if (error) {
         setError(error.message);
         setLoading(false);
       }
       if (data) {
-       setLocation("/editor/"+data[0].id)
+        setLocation("/editor/" + data[0].id);
       }
     } catch (error) {
       console.log(error.message);
       setLoading(false);
     }
   }
-
+  
+ 
   return (
     <>
       <Navbar />
@@ -91,7 +91,11 @@ export default function ActionsGrid() {
           Recent Activity
         </Title>
         <Status
-          title={project.length == 0 ? "No Projects Found." : "Select a project to continue"}
+          title={
+            project.length == 0
+              ? "No Projects Found."
+              : "Select a project to continue"
+          }
           description={null}
           data={project}
         />

@@ -69,7 +69,10 @@ const useStyles = createStyles((theme) => ({
 export default function HeaderSimple() {
   const [opened, toggleOpened] = useBooleanToggle(false);
   const { classes, cx } = useStyles();
-
+  async function logout() {
+    db.auth.signOut();
+    window.location.href = "/signin";
+  }
   return (
     <Header height={60}>
       <Container className={classes.header}>
@@ -83,7 +86,7 @@ export default function HeaderSimple() {
             InCode
           </Text>
         </Link>
-        {db.auth.user !== null && db.auth.user !== undefined ? (
+        {db.auth.user() !== null && db.auth.user() !== undefined ? (
           <Group>
             <Menu
             
@@ -91,7 +94,7 @@ export default function HeaderSimple() {
           transitionDuration={100}
           transitionTimingFunction="ease"
         >
-          <Menu.Item icon={<Logout size={14} />}>Logout</Menu.Item>
+          <Menu.Item icon={<Logout size={14} />} onClick={logout}>Logout</Menu.Item>
         </Menu>
           </Group>
         ) : (

@@ -46,7 +46,7 @@ export default function AuthenticationTitle() {
     }
   };
   React.useEffect(() => {
-    if(db.auth.user){
+    if(db.auth.user() !== null && db.auth.user() !== undefined){
       setLocation("/start")
     }
   },[])
