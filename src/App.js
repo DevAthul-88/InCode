@@ -10,7 +10,9 @@ function App() {
     <>
       <Router>
         <Route path="/" component={Home} />
-        <Route path="/editor" component={Editor} />
+        <Route path="/editor/:id">
+          {(params) => <Editor id={params.id}/>}
+        </Route>
         <Route path="/start" component={Start} />
         <Route path="/signin" component={SignIn} />
         <Route path="/signup" component={SignUp} />

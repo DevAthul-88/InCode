@@ -5,6 +5,7 @@ import {
   Header,
   TextInput,
   Textarea,
+  Menu,
   Text,
 } from "@mantine/core";
 
@@ -15,6 +16,7 @@ import {
   Group,
   Button,
   Modal,
+  Center
 } from "@mantine/core";
 import {
   PlayerPlay,
@@ -29,7 +31,10 @@ import { javascript } from "@codemirror/lang-javascript";
 import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
 import { Tabs } from "@mantine/core";
-
+import db from "../db/db";
+import { Link } from "wouter";
+import { User, Logout } from "tabler-icons-react";
+import { Loader } from "@mantine/core";
 const useStyles = createStyles((theme) => ({
   header: {
     display: "flex",
@@ -71,7 +76,8 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function Editor() {
+export default function Editor({ id }) {
+  document.title = "InCode - Editor";
   const [opened, setOpened] = useState(false);
   const { classes, cx } = useStyles();
   const [htmls, setHtml] = useState("");
@@ -80,7 +86,31 @@ export default function Editor() {
   const [srcDoc, setSrcDoc] = useState("");
   const [run, setRun] = useState(1);
   const [value, setValue] = useState("");
-  const [theme , setTheme] = useState("dark")
+  const [theme, setTheme] = useState("dark");
+  const [project, setProject] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function fetchProject() {
+    try {
+      setLoading(true)
+      const { data, error } = await db.from("code").select().eq("id", id);
+      if (error) {
+        console.log(error.message);
+      }
+      if (data) {
+        setHtml(data && data[0].html)
+        setCss(data && data[0].css)
+        setJs(data && data[0].js)
+        setLoading(false)
+      }
+    } catch (error) {
+
+      console.log(error.message);
+    }
+  }
+  useEffect(() => {
+    fetchProject();
+  }, []);
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSrcDoc(`
@@ -125,7 +155,37 @@ export default function Editor() {
               >
                 Settings
               </Button>
-              <Button variant="subtle">SignIn</Button>
+              {db.auth.user !== null && db.auth.user !== undefined ? (
+                <Group>
+                  <Menu
+                    transition="rotate-right"
+                    transitionDuration={100}
+                    transitionTimingFunction="ease"
+                  >
+                    <Menu.Item icon={<User size={14} />}>Profile</Menu.Item>
+                    <Menu.Item icon={<Logout size={14} />}>Logout</Menu.Item>
+                  </Menu>
+                </Group>
+              ) : (
+                <Group spacing={5} className={classes.links}>
+                  <Link
+                    href={"/signin"}
+                    className={cx(classes.link, {
+                      [classes.linkActive]: "active" === null,
+                    })}
+                  >
+                    SignIn
+                  </Link>
+                  <Link
+                    href={"/signup"}
+                    className={cx(classes.link, {
+                      [classes.linkActive]: "active" === null,
+                    })}
+                  >
+                    SignUp
+                  </Link>
+                </Group>
+              )}
             </Group>
           </Container>
         </Header>
@@ -139,106 +199,116 @@ export default function Editor() {
         },
       })}
     >
-      <Text color="#fff" align="center">
-        <Kbd>ctrl</Kbd> + <Kbd>s</Kbd> To Run The Code
-      </Text>
+      {loading ? (
+        <Center><Loader size="lg" /></Center>
+      ) : (
+        <>
+          <Text color="#fff" align="center">
+            <Kbd>ctrl</Kbd> + <Kbd>s</Kbd> To Run The Code
+          </Text>
 
-      <Tabs variant="outline">
-        <Tabs.Tab label="HTML" icon={<BrandHtml5 size={16} />} tabKey="html">
-          <CodeMirror
-            value={htmls}
-            height="200px"
-            theme={theme}
-            extensions={[html()]}
-            onChange={(value, viewUpdate) => {
-              setHtml(value);
-            }}
-            placeholder="HTML"
-            minHeight="300px"
-            style={{ fontSize: value }}
-          />
-        </Tabs.Tab>
-        <Tabs.Tab label="CSS" icon={<BrandCss3 size={16} />} tabKey="css">
-          <CodeMirror
-            value={csss}
-            height="200px"
-            theme={theme}
-            extensions={[css()]}
-            onChange={(value, viewUpdate) => {
-              setCss(value);
-            }}
-            placeholder="CSS"
-            minHeight="300px"
-            style={{ fontSize: value }}
-          />
-        </Tabs.Tab>
-        <Tabs.Tab
-          label="JAVASCRIPT"
-          icon={<BrandJavascript size={16} />}
-          tabKey="js"
-        >
-          <CodeMirror
-            value={jss}
-            height="200px"
-            theme={theme}
-            extensions={[javascript()]}
-            onChange={(value, viewUpdate) => {
-              setJs(value);
-            }}
-            placeholder="JAVASCRIPT"
-            minHeight="300px"
-            style={{ fontSize: value }}
-          />
-        </Tabs.Tab>
-      </Tabs>
+          <Tabs variant="outline">
+            <Tabs.Tab
+              label="HTML"
+              icon={<BrandHtml5 size={16} />}
+              tabKey="html"
+            >
+              <CodeMirror
+                value={htmls}
+                height="200px"
+                theme={theme}
+                extensions={[html()]}
+                onChange={(value, viewUpdate) => {
+                  setHtml(value);
+                }}
+                placeholder="HTML"
+                minHeight="300px"
+                style={{ fontSize: value }}
+              />
+            </Tabs.Tab>
+            <Tabs.Tab label="CSS" icon={<BrandCss3 size={16} />} tabKey="css">
+              <CodeMirror
+                value={csss}
+                height="200px"
+                theme={theme}
+                extensions={[css()]}
+                onChange={(value, viewUpdate) => {
+                  setCss(value);
+                }}
+                placeholder="CSS"
+                minHeight="300px"
+                style={{ fontSize: value }}
+              />
+            </Tabs.Tab>
+            <Tabs.Tab
+              label="JAVASCRIPT"
+              icon={<BrandJavascript size={16} />}
+              tabKey="js"
+            >
+              <CodeMirror
+                value={jss}
+                height="200px"
+                theme={theme}
+                extensions={[javascript()]}
+                onChange={(value, viewUpdate) => {
+                  setJs(value);
+                }}
+                placeholder="JAVASCRIPT"
+                minHeight="300px"
+                style={{ fontSize: value }}
+              />
+            </Tabs.Tab>
+          </Tabs>
 
-      <div className="pane">
-        <iframe
-          srcDoc={srcDoc}
-          title="output"
-          sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-          frameBorder="0"
-          width="100%"
-          height="100%"
-        />
-      </div>
+          <div className="pane">
+            <iframe
+              srcDoc={srcDoc}
+              title="output"
+              sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+              frameBorder="0"
+              width="100%"
+              height="100%"
+            />
+          </div>
 
-      <>
-        <Modal
-          size={"lg"}
-          opened={opened}
-          onClose={() => setOpened(false)}
-          title="Settings"
-        >
-          <Text>Meta Data</Text>
-          <TextInput label="Title" mt="sm" />
-          <Textarea label="Description" mt="sm" />
-          <br />
-          <Button variant="gradient">Save</Button>
+          <>
+            <Modal
+              size={"lg"}
+              opened={opened}
+              onClose={() => setOpened(false)}
+              title="Settings"
+            >
+              <Text>Meta Data</Text>
+              <TextInput label="Title" mt="sm" />
+              <Textarea label="Description" mt="sm" />
+              <br />
+              <Button variant="gradient">Save</Button>
 
-          <Text mt="sm">Font Size</Text>
+              <Text mt="sm">Font Size</Text>
 
-          <Select
-            mt="sm"
-            placeholder="Pick one"
-            searchable
-            nothingFound="No options"
-            data={["12px", "15px", "18px", "22px"]}
-            onChange={setValue}
-          />
+              <Select
+                mt="sm"
+                placeholder="Pick one"
+                searchable
+                nothingFound="No options"
+                data={["12px", "15px", "18px", "22px"]}
+                onChange={setValue}
+              />
 
-          <Text mt="sm">Theme</Text>
+              <Text mt="sm">Theme</Text>
 
-          <Select
-            mt="sm"
-            placeholder="Pick one"
-            searchable
-            nothingFound="No options"
-            data={["dark" , "light"]}
-            onChange={setTheme}
-          />
-        </Modal>
-      </>
+              <Select
+                mt="sm"
+                placeholder="Pick one"
+                searchable
+                nothingFound="No options"
+                data={["dark", "light"]}
+                onChange={setTheme}
+              />
+            </Modal>
+          </>
+        </>
+      )}
     </AppShell>
   );
 }

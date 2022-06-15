@@ -115,12 +115,6 @@ export default function HeaderSimple() {
             </Link>
           </Group>
         )}
-        <Burger
-          opened={opened}
-          onClick={() => toggleOpened()}
-          className={classes.burger}
-          size="sm"
-        />
       </Container>
     </Header>
   );

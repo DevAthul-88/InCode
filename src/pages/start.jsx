@@ -10,6 +10,7 @@ import { Alert } from "@mantine/core";
 import { AlertCircle } from "tabler-icons-react";
 import { useLocation } from "wouter";
 
+
 export default function ActionsGrid() {
   const [project, setProject] = React.useState([]);
   const [opened, setOpened] = useState(false);
@@ -58,7 +59,7 @@ export default function ActionsGrid() {
         setLoading(false);
       }
       if (data) {
-       setLocation("/editor?id="+data[0].id)
+       setLocation("/editor/"+data[0].id)
       }
     } catch (error) {
       console.log(error.message);
