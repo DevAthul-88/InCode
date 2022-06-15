@@ -16,7 +16,7 @@ import {
   Group,
   Button,
   Modal,
-  Center
+  Center,
 } from "@mantine/core";
 import {
   PlayerPlay,
@@ -35,6 +35,8 @@ import db from "../db/db";
 import { Link } from "wouter";
 import { User, Logout } from "tabler-icons-react";
 import { Loader } from "@mantine/core";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const useStyles = createStyles((theme) => ({
   header: {
     display: "flex",
@@ -92,19 +94,18 @@ export default function Editor({ id }) {
 
   async function fetchProject() {
     try {
-      setLoading(true)
+      setLoading(true);
       const { data, error } = await db.from("code").select().eq("id", id);
       if (error) {
         console.log(error.message);
       }
       if (data) {
-        setHtml(data && data[0].html)
-        setCss(data && data[0].css)
-        setJs(data && data[0].js)
-        setLoading(false)
+        setHtml(data && data[0].html);
+        setCss(data && data[0].css);
+        setJs(data && data[0].js);
+        setLoading(false);
       }
     } catch (error) {
-
       console.log(error.message);
     }
   }
@@ -124,6 +125,53 @@ export default function Editor({ id }) {
 
     return () => clearTimeout(timeout);
   }, [run]);
+
+  async function saveProject() {
+    try {
+      const { data, error } = await db
+        .from("code")
+        .insert([{ html: htmls, css: csss, js: jss }])
+        .eq("id", id);
+        if(error){
+          toast(error.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            type: "error",
+          });
+        }
+        if(data){
+          toast("Project saved!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            type: "success",
+          });
+        }
+    } catch (error) {
+      toast(error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        type: "error",
+      });
+    }
+  }
 
   return (
     <AppShell
@@ -145,7 +193,11 @@ export default function Editor({ id }) {
               >
                 Run
               </Button>
-              <Button leftIcon={<Upload />} variant="subtle">
+              <Button
+                leftIcon={<Upload />}
+                variant="subtle"
+                onClick={saveProject}
+              >
                 Save
               </Button>
               <Button
@@ -200,9 +252,22 @@ export default function Editor({ id }) {
       })}
     >
       {loading ? (
-        <Center><Loader size="lg" /></Center>
+        <Center>
+          <Loader size="lg" />
+        </Center>
       ) : (
         <>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
           <Text color="#fff" align="center">
             <Kbd>ctrl</Kbd> + <Kbd>s</Kbd> To Run The Code
           </Text>
