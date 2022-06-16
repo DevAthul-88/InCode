@@ -36,7 +36,7 @@ const features = [
     icon: ReceiptOff,
     title: "Free and open source",
     description:
-      "InCode are published under MIT license",
+      "InCode are published under MIT license.",
   },
   {
     icon: FileDollar,
@@ -48,13 +48,13 @@ const features = [
     icon: CircleDotted,
     title: "No annoying adds",
     description:
-      "No ads no spams",
+      "No ads, no spams",
   },
   {
     icon: Flame,
     title: "Flexible",
     description:
-      "InCode is very flexible. Create project save it and you can reuse it anywhere.",
+      "InCode is very flexible. Create a project, save it and you can reuse it anywhere.",
   },
 ];
 
@@ -88,9 +88,7 @@ export default function FeaturesTitle() {
             A fully featured online code editor.
           </Title>
           <Text color="dimmed">
-            With InCode you can create your own static website faster and more
-            efficiently. Export it or save it so you can use it anywhere anytime
-            you like.
+          With InCode, you can create your own static website faster and more efficiently. Export it or save it so you can use it anywhere, anytime you like.
           </Text>
 
           <Link href="/start">

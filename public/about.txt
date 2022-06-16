@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Sarala
+- Font Author: Copyright 2015 by Andres Torresi. All rights reserved.
+- Font Source: http://fonts.gstatic.com/s/sarala/v10/uK_x4riEZv4o1w9ptjI3OtWYVkMpXA.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))

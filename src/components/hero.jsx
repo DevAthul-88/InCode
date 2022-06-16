@@ -92,12 +92,11 @@ export default function HeroTitle() {
           <Text component="span" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} inherit>
             fully featured
           </Text>{' '}
-          Static websites easily and faster
+          static websites easily and faster
         </h1>
 
         <Text className={classes.description} color="dimmed">
-          With InCode you can create your own static website faster and more efficiently.
-          Export it or save it so you can use it anywhere anytime you like.
+        With InCode, you can create your own static website faster and more efficiently. Export it or save it so you can use it anywhere, anytime you like.
         </Text>
 
         <Group className={classes.controls}>
@@ -113,6 +112,7 @@ export default function HeroTitle() {
           </Link>
 
           <Button
+         
             component="a"
             href="https://github.com/DevAthul-88/InCode"
             size="xl"
