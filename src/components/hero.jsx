@@ -114,7 +114,7 @@ export default function HeroTitle() {
 
           <Button
             component="a"
-            href="https://github.com/mantinedev/mantine"
+            href="https://github.com/DevAthul-88/InCode"
             size="xl"
             variant="outline"
             className={cx(classes.control, classes.githubControl)}

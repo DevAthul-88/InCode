@@ -1,14 +1,24 @@
-import React from 'react';
-import { createStyles, Title, SimpleGrid, Text, Button, ThemeIcon, Grid, Col } from '@mantine/core';
-import { ReceiptOff, Flame, CircleDotted, FileCode } from 'tabler-icons-react';
-
+import React from "react";
+import {
+  createStyles,
+  Title,
+  SimpleGrid,
+  Text,
+  Button,
+  ThemeIcon,
+  Grid,
+  Col,
+} from "@mantine/core";
+import { ReceiptOff, Flame, CircleDotted, FileCode ,  FileDollar} from "tabler-icons-react";
+import { Link } from "wouter";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+    backgroundColor:
+      theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
     padding: `${theme.spacing.xl * 2}px ${theme.spacing.xl}px`,
-    overflow:"hidden",
-    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+    overflow: "hidden",
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
   },
 
   title: {
@@ -17,33 +27,34 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 900,
     lineHeight: 1.1,
     marginBottom: theme.spacing.md,
-    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
   },
- 
 }));
 
 const features = [
   {
     icon: ReceiptOff,
-    title: 'Free and open source',
-    description: 'All packages are published under MIT license, you can use Mantine in any project',
+    title: "Free and open source",
+    description:
+      "InCode are published under MIT license",
   },
   {
-    icon: FileCode,
-    title: 'TypeScript based',
-    description: 'Build type safe applications, all components and hooks export types',
+    icon: FileDollar,
+    title: "Free",
+    description:
+      "InCode is totally free and open source.",
   },
   {
     icon: CircleDotted,
-    title: 'No annoying focus ring',
+    title: "No annoying adds",
     description:
-      'With new :focus-visible selector focus ring will appear only when user navigates with keyboard',
+      "No ads no spams",
   },
   {
     icon: Flame,
-    title: 'Flexible',
+    title: "Flexible",
     description:
-      'Customize colors, spacing, shadows, fonts and many other settings with global theme object',
+      "InCode is very flexible. Create project save it and you can reuse it anywhere.",
   },
 ];
 
@@ -51,12 +62,12 @@ export default function FeaturesTitle() {
   const { classes } = useStyles();
 
   const items = features.map((feature) => (
-    <div key={feature.title} >
+    <div key={feature.title}>
       <ThemeIcon
         size={44}
         radius="md"
         variant="gradient"
-        gradient={{ deg: 133, from: 'blue', to: 'cyan' }}
+        gradient={{ deg: 133, from: "blue", to: "cyan" }}
       >
         <feature.icon size={26} />
       </ThemeIcon>
@@ -74,25 +85,32 @@ export default function FeaturesTitle() {
       <Grid gutter={80}>
         <Col span={12} md={5}>
           <Title className={classes.title} order={2}>
-            A fully featured React components library for your next project
+            A fully featured online code editor.
           </Title>
           <Text color="dimmed">
-            Build fully functional accessible web applications faster than ever – Mantine includes
-            more than 120 customizable components and hooks to cover you in any situation
+            With InCode you can create your own static website faster and more
+            efficiently. Export it or save it so you can use it anywhere anytime
+            you like.
           </Text>
 
-          <Button
-            variant="gradient"
-            gradient={{ deg: 133, from: 'blue', to: 'cyan' }}
-            size="lg"
-            radius="md"
-            mt="xl"
-          >
-            Get started
-          </Button>
+          <Link href="/start">
+            <Button
+              variant="gradient"
+              gradient={{ deg: 133, from: "blue", to: "cyan" }}
+              size="lg"
+              radius="md"
+              mt="xl"
+            >
+              Get started
+            </Button>
+          </Link>
         </Col>
         <Col span={12} md={7}>
-          <SimpleGrid cols={2} spacing={30} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
+          <SimpleGrid
+            cols={2}
+            spacing={30}
+            breakpoints={[{ maxWidth: "md", cols: 1 }]}
+          >
             {items}
           </SimpleGrid>
         </Col>
