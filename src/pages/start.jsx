@@ -9,6 +9,7 @@ import { Modal, TextInput, Textarea, Grid, Text, Select } from "@mantine/core";
 import { Alert } from "@mantine/core";
 import { AlertCircle } from "tabler-icons-react";
 import { useLocation } from "wouter";
+import { library } from "../data";
 
 export default function ActionsGrid() {
   const [project, setProject] = React.useState([]);
@@ -18,12 +19,22 @@ export default function ActionsGrid() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = React.useState();
   const [location, setLocation] = useLocation();
+  const [css, setCss] = React.useState("");
+  const [js, setJs] = React.useState("");
+  const [cssLib, setCssLib] = React.useState(null);
   document.title = "InCode - Start Project";
   React.useEffect(() => {
-    if (db.auth.user() == null && db.auth.user() == undefined) {
+    if (db.auth.user() == null && db.auth.user() == "") {
       setLocation("/signin");
     }
   }, []);
+
+  const d = library.filter((e) => e.key == css);
+
+  React.useEffect(() => {
+    setCssLib(d.length == 1 ? d[0].data : "");
+  }, [css]);
+
   React.useEffect(() => {
     async function fetchProject() {
       try {
@@ -53,6 +64,8 @@ export default function ActionsGrid() {
           title: title,
           description: description,
           userId: db.auth.user()?.id,
+          html: cssLib !== null ? cssLib : "",
+          js_lib: js !== null ? js : "",
         },
       ]);
 
@@ -147,9 +160,11 @@ export default function ActionsGrid() {
             }}
           ></Textarea>
           <Select
-          mt="sm"
+            mt="sm"
             label="Select a CSS library. If you want."
             placeholder="Pick one"
+            value={css}
+            onChange={setCss}
             data={[
               { value: "bootstrap", label: "Bootstrap" },
               { value: "bulma", label: "Bulma" },
@@ -160,24 +175,24 @@ export default function ActionsGrid() {
               { value: "ui-kit", label: "UI kit" },
               { value: "materialize", label: "Materialize CSS " },
               { value: "tailwind", label: "Tailwind CSS" },
-
             ]}
           />
-           <Select
-          mt="sm"
+          <Select
+           value={js}
+           onChange={setJs}
+            mt="sm"
             label="Select a JavaScript library. If you want."
             placeholder="Pick one"
             data={[
-              { value: "jquery", label: "jQuery" },
-              { value: "d3-js", label: "D3.js" },
-              { value: "Pixi-js", label: "Pixi.js" },
-              { value: "three-js", label: "Three.js" },
-              { value: "velocity.js", label: "Velocity.js" },
-              { value: "anime-js", label: "Anime.js" },
-              { value: "phaser", label: "Phaser" },
-              { value: "jquery-ui", label: "JQuery UI" },
-              { value: "stage-js", label: "Stage.js" },
-
+              { value: `<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`, label: "jQuery" },
+              { value:`<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.4.4/d3.min.js" integrity="sha512-hnFpvCiJ8Fr1lYLqcw6wLgFUOEZ89kWCkO+cEekwcWPIPKyknKV1eZmSSG3UxXfsSuf+z/SgmiYB1zFOg3l2UQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`, label: "D3.js" },
+              { value: `<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.4.2/cjs/pixi.min.js" integrity="sha512-YViHhjOMIfLUvkxdsaTMAqAfBVrBmovkuptmZan0suYtvIQylhK0ewfASS7LFpYZnRNh9GJ1s4qNLd9QLDrykA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`, label: "Pixi.js" },
+              { value:`<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" integrity="sha512-334uBDwY0iZ2TklV1OtDtBW9vp7jjP7SWRzT7Ehu1fdtPIjTpCwTSFb8HI/YBau9L1/kRBEOALrS229Kry4yFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`, label: "Three.js" },
+              { value:`<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/2.0.6/velocity.min.js" integrity="sha512-+VS2+Nl1Qit71a/lbncmVsWOZ0BmPDkopw5sXAS2W+OfeceCEd9OGTQWjgVgP5QaMV4ddqOIW9XLW7UVFzkMAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`, label: "Velocity.js" },
+              { value: `<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`, label: "Anime.js" },
+              { value: `<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0-beta.9/phaser.min.js" integrity="sha512-cRon/0QzfNiUMbB8zpYVZC/SnwAKu0grMFiQ8NhmhYeZcz4iu8uxXG/Z48ZcNYB9RHdaDNnmW4rN1XWfn2gYVg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`, label: "Phaser" },
+              { value: `<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`, label: "JQuery UI" },
+              { value: `<script src="https://cdnjs.cloudflare.com/ajax/libs/angular/12.2.16/core.umd.min.js" integrity="sha512-FF+Hgoenar/13JLINGu9aOgNyehtxKf9pP4VUmYC1DwZ3aTY1O/l0nTELpvin4CS8LikmTjEasjszlEapnN2+g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`, label: "Angular" },
             ]}
           />
           <Button variant="gradient" type="submit" mt="sm" loading={loading}>
