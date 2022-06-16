@@ -92,7 +92,10 @@ export default function HeroTitle() {
           <Text component="span" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} inherit>
             fully featured
           </Text>{' '}
-          static websites easily and faster
+          static websites easily and faster{" "}
+          <Text component="span" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} inherit>
+            100% private.
+          </Text>
         </h1>
 
         <Text className={classes.description} color="dimmed">

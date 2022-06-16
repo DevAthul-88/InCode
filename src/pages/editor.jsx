@@ -43,6 +43,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Device from "../components/device";
 import Footer from "../components/footer";
 import { useLocation } from "wouter";
+import {oneDark} from "@codemirror/theme-one-dark"
 
 const useStyles = createStyles((theme) => ({
   header: {
