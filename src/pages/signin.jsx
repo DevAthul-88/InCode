@@ -94,15 +94,6 @@ export default function AuthenticationTitle() {
                 setPassword(e.target.value);
               }}
             />
-            <Group position="apart" mt="md">
-              <Anchor
-                onClick={(event) => event.preventDefault()}
-                href="#"
-                size="sm"
-              >
-                Forgot password?
-              </Anchor>
-            </Group>
             <Button fullWidth mt="xl" type="submit" loading={loading}>
               Sign in
             </Button>
