@@ -8,7 +8,7 @@ import {
   Menu,
   Text,
 } from "@mantine/core";
-import useKeypress from 'react-use-keypress';
+import useKeypress from "react-use-keypress";
 import {
   createStyles,
   Container,
@@ -27,6 +27,7 @@ import {
   BrandJavascript,
   DeviceMobile,
   PageBreak,
+  Download,
 } from "tabler-icons-react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -103,10 +104,11 @@ export default function Editor({ id }) {
   const [metaLoading, setMetaLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [location, setLocation] = useLocation();
-  const [delLoading , setDelLoading] = useState(false);
+  const [delLoading, setDelLoading] = useState(false);
+  const [jsLib, setJsLib] = useState("");
 
-  useKeypress('Enter', () => {
-    setRun(run +1);
+  useKeypress("Enter", () => {
+    setRun(run + 1);
   });
 
   async function fetchProject() {
@@ -132,6 +134,7 @@ export default function Editor({ id }) {
         setJs(data && data[0].js);
         setTitle(data && data[0].title);
         setDescription(data && data[0].description);
+        setJsLib(data && data[0].js_lib);
         setLoading(false);
         if (data[0].userId !== db.auth?.user()?.id) {
           setLocation("/start");
@@ -156,9 +159,6 @@ export default function Editor({ id }) {
     if (!db.auth.user) {
       setLocation("/signin");
     }
-
-    
-
   }, []);
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -166,6 +166,7 @@ export default function Editor({ id }) {
         <html>
           <body>${htmls}</body>
           <style>${csss}</style>
+           ${jsLib !== null ? jsLib : ""}
           <script>${jss}</script>
         </html>
       `);
@@ -282,11 +283,11 @@ export default function Editor({ id }) {
     }
   };
 
- async function deleteProject(){
+  async function deleteProject() {
     try {
       setDelLoading(true);
-       const {data , error} = await db.from("code").delete().match({"id":id})
-       if (error) {
+      const { data, error } = await db.from("code").delete().match({ id: id });
+      if (error) {
         toast("Title and description are changed!", {
           position: "top-right",
           autoClose: 5000,
@@ -301,9 +302,9 @@ export default function Editor({ id }) {
         setDelLoading(false);
         setMetaLoading(false);
       }
-      if(data){
+      if (data) {
         setDelLoading(false);
-        setLocation("/start")
+        setLocation("/start");
       }
     } catch (error) {
       setDelLoading(false);
@@ -320,6 +321,10 @@ export default function Editor({ id }) {
       });
     }
   }
+
+  var obj = { html:htmls, css: csss , js:jss };
+  var data =
+    "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
 
   return (
     <>
@@ -357,6 +362,11 @@ export default function Editor({ id }) {
                 >
                   Save
                 </Button>
+                 <a href={`data:${data}`}   download="data.json">
+                 <Button leftIcon={<Download />} variant="subtle">
+                  Download as JSON
+                </Button>
+                 </a>
                 <Button
                   leftIcon={<Settings />}
                   variant="subtle"
@@ -592,6 +602,14 @@ export default function Editor({ id }) {
                     Save
                   </Button>
                 </form>
+
+                <TextInput
+                  label="Active JavaScript Library"
+                  mt="sm"
+                  defaultValue={jsLib}
+                  disabled
+                />
+
                 <Text mt="sm">Font Size</Text>
                 <Select
                   mt="sm"
@@ -629,7 +647,13 @@ export default function Editor({ id }) {
               title="Are you sure you want to delete this project?"
             >
               <Group>
-                <Button color="red" onClick={deleteProject} loading={delLoading}>Yes Delete It!</Button>
+                <Button
+                  color="red"
+                  onClick={deleteProject}
+                  loading={delLoading}
+                >
+                  Yes Delete It!
+                </Button>
               </Group>
             </Modal>
           </>
