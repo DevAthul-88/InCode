@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStyles, Container, Group, ActionIcon , Text} from '@mantine/core';
-import { BrandTwitter, BrandYoutube, BrandInstagram } from 'tabler-icons-react';
+import { BrandGithub, BrandGitlab } from 'tabler-icons-react';
 
 
 const useStyles = createStyles((theme) => ({
@@ -38,16 +38,10 @@ export default function FooterSocial() {
   return (
     <div className={classes.footer}>
       <Container className={classes.inner}>
-      <Text className="os" color={"white"} size="xl">InCode</Text>
+      <Text className="os" color={"white"} size="xl">InCode 2022</Text>
         <Group spacing={0} className={classes.links} position="right" noWrap>
           <ActionIcon size="lg">
-            <BrandTwitter size={18} />
-          </ActionIcon>
-          <ActionIcon size="lg">
-            <BrandYoutube size={18} />
-          </ActionIcon>
-          <ActionIcon size="lg">
-            <BrandInstagram size={18} />
+            <a href="https://github.com/DevAthul-88/InCode"><BrandGithub size={18} /></a>
           </ActionIcon>
         </Group>
       </Container>

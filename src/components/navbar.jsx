@@ -88,6 +88,14 @@ export default function HeaderSimple() {
         </Link>
         {db.auth.user() !== null && db.auth.user() !== undefined ? (
           <Group>
+            <Link
+              href={"/start"}
+              className={cx(classes.link, {
+                [classes.linkActive]: "active" === null,
+              })}
+            >
+              Start Project
+            </Link>
             <Menu
             
           transition="rotate-right"
