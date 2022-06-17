@@ -1,4 +1,4 @@
-import { Route, Router } from "wouter";
+import { Route, Router , Switch} from "wouter";
 import Home from "./pages/home";
 import Editor from "./pages/editor";
 import Start from "./pages/start";
@@ -8,7 +8,7 @@ import Notfound from "./pages/notfound";
 
 function App() {
   return (
-    <>
+    <Switch>
       <Router>
         <Route path="/" component={Home} />
         <Route path="/editor/:id">
@@ -19,7 +19,7 @@ function App() {
         <Route path="/signup" component={SignUp} />
         <Route path="/:rest" component={Notfound}/>
       </Router>
-    </>
+    </Switch>
   );
 }
 
