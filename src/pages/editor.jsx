@@ -157,7 +157,7 @@ export default function Editor({ id }) {
   }
   useEffect(() => {
     fetchProject();
-    if (!db.auth.user) {
+    if (db.auth.user() == null && db.auth.user() == undefined) {
       setLocation("/signin");
     }
   }, []);

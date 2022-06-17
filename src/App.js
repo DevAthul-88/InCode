@@ -4,6 +4,7 @@ import Editor from "./pages/editor";
 import Start from "./pages/start";
 import SignIn from "./pages/signin";
 import SignUp from "./pages/signup";
+import Notfound from "./pages/notfound";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/start" component={Start} />
         <Route path="/signin" component={SignIn} />
         <Route path="/signup" component={SignUp} />
+        <Route path="*" component={Notfound}/>
       </Router>
     </>
   );
