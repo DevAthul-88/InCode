@@ -17,7 +17,7 @@ function App() {
         <Route path="/start" component={Start} />
         <Route path="/signin" component={SignIn} />
         <Route path="/signup" component={SignUp} />
-        <Route path="/:rest">
+        <Route path="/:rest*">
           <Notfound />
         </Route>
       </Router>
