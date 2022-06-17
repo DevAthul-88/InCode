@@ -1,5 +1,6 @@
 import React from 'react';
 import { createStyles, Title, Text, Button, Container, Group } from '@mantine/core';
+import {Link} from "wouter"
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -51,9 +52,11 @@ export default function NotFoundTitle() {
         been moved to another URL.
       </Text>
       <Group position="center">
+        <Link href="/">
         <Button variant="subtle" size="md">
           Take me back to home page
         </Button>
+        </Link>
       </Group>
     </Container>
   );
