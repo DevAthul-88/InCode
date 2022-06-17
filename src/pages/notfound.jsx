@@ -39,7 +39,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function NotFoundTitle() {
+export default function NotFoundTitle() {
   const { classes } = useStyles();
   document.title = "InCode - Not Found";
   return (
