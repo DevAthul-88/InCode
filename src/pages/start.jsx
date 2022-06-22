@@ -24,9 +24,10 @@ export default function ActionsGrid() {
   const [cssLib, setCssLib] = React.useState(null);
   document.title = "InCode - Start Project";
   React.useEffect(() => {
-    if (db.auth.user() == null && db.auth.user() == "") {
+    if (db.auth.user() == null) {
       setLocation("/signin");
     }
+    console.log(db.auth.user());
   }, []);
 
   const d = library.filter((e) => e.key == css);
