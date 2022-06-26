@@ -79,7 +79,7 @@ export default function AuthenticationTitle() {
           <form action="" onSubmit={handleSubmit}>
             <TextInput
               label="Email"
-              placeholder="you@mantine.dev"
+              placeholder="you@gmail.com"
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
