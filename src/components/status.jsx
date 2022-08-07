@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStyles, Card, Group, Switch, Text , Button} from '@mantine/core';
+import { createStyles, Card, Group, Switch, Text , Button , Loader} from '@mantine/core';
 import {Link} from 'wouter'
 
 const useStyles = createStyles((theme) => ({
@@ -50,7 +50,7 @@ export default function SwitchesCard({ title, description, data }) {
   return (
     <Card withBorder  p="xl" className={classes.card} mt="xl">
       <Text size="lg" className={classes.title} weight={500}>
-        {title}
+      {title == true ? <Loader variant='dots'/> : title}
       </Text>
       <Text size="xs" color="dimmed" mt={3} mb="xl">
         {description}

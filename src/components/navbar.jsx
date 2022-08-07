@@ -6,7 +6,7 @@ import {
   Text,
   Group,
   Menu,
-  Burger,
+  Navbar
 } from "@mantine/core";
 import { useBooleanToggle } from "@mantine/hooks";
 import { Link } from "wouter";
@@ -19,6 +19,7 @@ const useStyles = createStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     height: "100%",
+    padding:"2rem",
   },
 
   links: {
@@ -74,8 +75,8 @@ export default function HeaderSimple() {
     window.location.href = "/signin";
   }
   return (
-    <Header height={60}>
-      <Container className={classes.header}>
+    <Header height={60} className={classes.header}>
+
         <Link href="/">
           <Text
             className="os"
@@ -88,6 +89,7 @@ export default function HeaderSimple() {
         </Link>
         {db.auth.user() !== null && db.auth.user() !== undefined ? (
           <Group>
+          
             <Link
               href={"/start"}
               className={cx(classes.link, {
@@ -125,7 +127,7 @@ export default function HeaderSimple() {
             </Link>
           </Group>
         )}
-      </Container>
+    
     </Header>
   );
 }

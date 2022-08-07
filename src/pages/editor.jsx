@@ -28,6 +28,7 @@ import {
   DeviceMobile,
   PageBreak,
   Download,
+  Home2
 } from "tabler-icons-react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -43,7 +44,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Device from "../components/device";
 import Footer from "../components/footer";
 import { useLocation } from "wouter";
-import {oneDark} from "@codemirror/theme-one-dark"
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -51,6 +51,19 @@ const useStyles = createStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     height: "100%",
+    padding: "2rem",
+  },
+
+  links: {
+    [theme.fn.smallerThan("xs")]: {
+      display: "none",
+    },
+  },
+
+  burger: {
+    [theme.fn.largerThan("xs")]: {
+      display: "none",
+    },
   },
 
   link: {
@@ -323,94 +336,96 @@ export default function Editor({ id }) {
     }
   }
 
-  var obj = { html:htmls, css: csss , js:jss };
+  var obj = { html: htmls, css: csss, js: jss };
   var data =
     "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
 
   return (
     <>
+      <Header height={60} className={classes.header}>
+        <Link href="/start">
+          <Text
+            size="xl"
+            className="os"
+            color={"white"}
+            style={{ cursor: "pointer" }}
+          >
+            InCode
+          </Text>
+        </Link>
+
+        <Group spacing={5} className={classes.links}>
+        <Link href="/">
+            <Button leftIcon={<Home2 />} variant="subtle">
+              Home
+            </Button>
+          </Link>
+          <Button
+            leftIcon={<PlayerPlay />}
+            variant="subtle"
+            onClick={() => {
+              setRun(run + 1);
+            }}
+          >
+            Run
+          </Button>
+          <Button
+            leftIcon={<Upload />}
+            variant="subtle"
+            onClick={saveProject}
+            loading={saveLoading}
+          >
+            Save
+          </Button>
+          <a href={`data:${data}`} download="data.json">
+            <Button leftIcon={<Download />} variant="subtle">
+              Download as JSON
+            </Button>
+          </a>
+         
+          <Button
+            leftIcon={<Settings />}
+            variant="subtle"
+            onClick={() => setOpened(true)}
+          >
+            Settings
+          </Button>
+          {db.auth.user !== null && db.auth.user !== undefined ? (
+            <Group>
+              <Menu
+                transition="rotate-right"
+                transitionDuration={100}
+                transitionTimingFunction="ease"
+              >
+                <Menu.Item icon={<Logout size={14} />} onClick={logout}>
+                  Logout
+                </Menu.Item>
+              </Menu>
+            </Group>
+          ) : (
+            <Group spacing={5} className={classes.links}>
+              <Link
+                href={"/signin"}
+                className={cx(classes.link, {
+                  [classes.linkActive]: "active" === null,
+                })}
+              >
+                SignIn
+              </Link>
+              <Link
+                href={"/signup"}
+                className={cx(classes.link, {
+                  [classes.linkActive]: "active" === null,
+                })}
+              >
+                SignUp
+              </Link>
+            </Group>
+          )}
+        </Group>
+      </Header>
       <AppShell
         padding="md"
-        header={
-          <Header height={60}>
-            <Container className={classes.header}>
-              <Link href="/start">
-                <Text
-                  size="xl"
-                  className="os"
-                  color={"white"}
-                  style={{ cursor: "pointer" }}
-                >
-                  InCode
-                </Text>
-              </Link>
-
-              <Group spacing={5} className={classes.links}>
-                <Button
-                  leftIcon={<PlayerPlay />}
-                  variant="subtle"
-                  onClick={() => {
-                    setRun(run + 1);
-                  }}
-                >
-                  Run
-                </Button>
-                <Button
-                  leftIcon={<Upload />}
-                  variant="subtle"
-                  onClick={saveProject}
-                  loading={saveLoading}
-                >
-                  Save
-                </Button>
-                 <a href={`data:${data}`}   download="data.json">
-                 <Button leftIcon={<Download />} variant="subtle">
-                  Download as JSON
-                </Button>
-                 </a>
-                <Button
-                  leftIcon={<Settings />}
-                  variant="subtle"
-                  onClick={() => setOpened(true)}
-                >
-                  Settings
-                </Button>
-                {db.auth.user !== null && db.auth.user !== undefined ? (
-                  <Group>
-                    <Menu
-                      transition="rotate-right"
-                      transitionDuration={100}
-                      transitionTimingFunction="ease"
-                    >
-                      <Menu.Item icon={<Logout size={14} />} onClick={logout}>
-                        Logout
-                      </Menu.Item>
-                    </Menu>
-                  </Group>
-                ) : (
-                  <Group spacing={5} className={classes.links}>
-                    <Link
-                      href={"/signin"}
-                      className={cx(classes.link, {
-                        [classes.linkActive]: "active" === null,
-                      })}
-                    >
-                      SignIn
-                    </Link>
-                    <Link
-                      href={"/signup"}
-                      className={cx(classes.link, {
-                        [classes.linkActive]: "active" === null,
-                      })}
-                    >
-                      SignUp
-                    </Link>
-                  </Group>
-                )}
-              </Group>
-            </Container>
-          </Header>
-        }
         styles={(theme) => ({
           main: {
             backgroundColor:

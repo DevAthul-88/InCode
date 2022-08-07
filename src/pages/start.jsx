@@ -1,11 +1,11 @@
-import { Container, Title, Button } from "@mantine/core";
+import { Container, Title, Button , Stack} from "@mantine/core";
 import React, { useState } from "react";
 import Navbar from "../components/navbar";
 import Status from "../components/status";
 import { Plus } from "tabler-icons-react";
 import Footer from "../components/footer";
 import db from "../db/db";
-import { Modal, TextInput, Textarea, Grid, Text, Select } from "@mantine/core";
+import { Modal, TextInput, Textarea, Grid, Text, Select} from "@mantine/core";
 import { Alert } from "@mantine/core";
 import { AlertCircle } from "tabler-icons-react";
 import { useLocation } from "wouter";
@@ -18,6 +18,7 @@ export default function ActionsGrid() {
   const [description, setDescription] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = React.useState();
+  const [projectLoading , setProjectLoading] = useState(false);
   const [location, setLocation] = useLocation();
   const [css, setCss] = React.useState("");
   const [js, setJs] = React.useState("");
@@ -39,18 +40,22 @@ export default function ActionsGrid() {
   React.useEffect(() => {
     async function fetchProject() {
       try {
+        setProjectLoading(true)
         const { error, data } = await db
           .from("code")
           .select()
           .eq("userId", db.auth.user()?.id);
         if (error) {
           console.log(error.message);
+          setProjectLoading(false)
         }
         if (data) {
           setProject(data);
+          setProjectLoading(false)
         }
       } catch (error) {
         console.log(error.message);
+        setProjectLoading(false)
       }
     }
     fetchProject();
@@ -82,15 +87,6 @@ export default function ActionsGrid() {
       setLoading(false);
     }
   }
-  const time = new Date().getHours();
-  let greeting;
-  if (time < 10) {
-    greeting = "Good morning";
-  } else if (time < 20) {
-    greeting = "Good day";
-  } else {
-    greeting = "Good evening";
-  }
 
   return (
     <>
@@ -100,21 +96,8 @@ export default function ActionsGrid() {
           {error}
         </Alert>
       )}
-      <Container>
-        <Grid>
-          <Grid.Col span={10}>
-            <Text
-              mt="md"
-              mb="xl"
-              size="xl"
-              weight="bold"
-              color="white"
-              style={{ color: "white" }}
-            >
-              {greeting} {db.auth.user()?.user_metadata?.username}
-            </Text>
-          </Grid.Col>
-          <Grid.Col span={1}>
+      <Container size="xl">
+          <div>
             <Button
               mt="xl"
               variant="gradient"
@@ -123,16 +106,15 @@ export default function ActionsGrid() {
             >
               New Project
             </Button>
-          </Grid.Col>
-        </Grid>
+          </div>
         <Title mt="xl" color="white" style={{ color: "white" }}>
           Recent Activity
         </Title>
         <Status
           title={
-            project.length == 0
-              ? "No Projects Found."
-              : "Select a project to continue"
+            projectLoading ? projectLoading : project.length == 0
+            ? "No Projects Found."
+            : "Select a project to continue"
           }
           description={null}
           data={project}
