@@ -15,13 +15,13 @@ body {
 }
 
 .pane {
-     height: 50vh;
      width: 100%;
     display: flex;
     background: #fff;
     resize:horizontal;
     overflow: auto;
 }
+
 
 .panes {
     height:100vh;

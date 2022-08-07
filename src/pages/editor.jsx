@@ -6,6 +6,8 @@ import {
   TextInput,
   Textarea,
   Menu,
+  Stack,
+  SimpleGrid,
   Text,
 } from "@mantine/core";
 import useKeypress from "react-use-keypress";
@@ -23,12 +25,14 @@ import {
   Upload,
   Settings,
   BrandHtml5,
+  LayoutBottombar,
+  LayoutColumns,
   BrandCss3,
   BrandJavascript,
   DeviceMobile,
   PageBreak,
   Download,
-  Home2
+  Home2,
 } from "tabler-icons-react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -120,10 +124,15 @@ export default function Editor({ id }) {
   const [location, setLocation] = useLocation();
   const [delLoading, setDelLoading] = useState(false);
   const [jsLib, setJsLib] = useState("");
+  const [layout, setLayout] = useState("row");
 
   useKeypress("Enter", () => {
     setRun(run + 1);
   });
+
+  useEffect(() => {
+    localStorage.setItem("fontSizeCode", value);
+  }, [value]);
 
   async function fetchProject() {
     try {
@@ -355,7 +364,7 @@ export default function Editor({ id }) {
         </Link>
 
         <Group spacing={5} className={classes.links}>
-        <Link href="/">
+          <Link href="/">
             <Button leftIcon={<Home2 />} variant="subtle">
               Home
             </Button>
@@ -369,6 +378,19 @@ export default function Editor({ id }) {
           >
             Run
           </Button>
+          <a href={`data:${data}`} download="data.json">
+            <Button leftIcon={<Download />} variant="subtle">
+              Download as JSON
+            </Button>
+          </a>
+
+          <Button
+            leftIcon={<Settings />}
+            variant="subtle"
+            onClick={() => setOpened(true)}
+          >
+            Settings
+          </Button>
           <Button
             leftIcon={<Upload />}
             variant="subtle"
@@ -376,19 +398,6 @@ export default function Editor({ id }) {
             loading={saveLoading}
           >
             Save
-          </Button>
-          <a href={`data:${data}`} download="data.json">
-            <Button leftIcon={<Download />} variant="subtle">
-              Download as JSON
-            </Button>
-          </a>
-         
-          <Button
-            leftIcon={<Settings />}
-            variant="subtle"
-            onClick={() => setOpened(true)}
-          >
-            Settings
           </Button>
           {db.auth.user !== null && db.auth.user !== undefined ? (
             <Group>
@@ -455,6 +464,16 @@ export default function Editor({ id }) {
             <Text color="#fff" align="center">
               <Kbd>Enter</Kbd> To Run The Code
             </Text>
+            <Stack align="flex-end">
+              <Group>
+                <Button variant="outline" onClick={() => {setLayout("row")}}>
+                  <LayoutBottombar />
+                </Button>
+                <Button variant="outline" onClick={() => {setLayout("column")}}>
+                  <LayoutColumns />
+                </Button>
+              </Group>
+            </Stack>
 
             <Tabs variant="outline" mt="sm">
               <Tabs.Tab
@@ -462,31 +481,39 @@ export default function Editor({ id }) {
                 icon={<BrandHtml5 size={16} />}
                 tabKey="html"
               >
-                <CodeMirror
-                  value={htmls}
-                  height="200px"
-                  theme={theme}
-                  extensions={[html()]}
-                  onChange={(value, viewUpdate) => {
-                    setHtml(value);
-                  }}
-                  placeholder="HTML"
-                  minHeight="300px"
-                  style={{ fontSize: value }}
-                />
-                <div>
-                  <iframe
-                    className="pane"
-                    srcDoc={srcDoc}
-                    title="output"
-                    sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-                    frameBorder="0"
-                    width="100%"
-                    height="100%"
+                <SimpleGrid cols={layout === "row" ? 1 : 2}>
+                  <CodeMirror
+                    value={htmls}
+                    height="200px"
+                    theme={theme}
+                    extensions={[html()]}
+                    onChange={(value, viewUpdate) => {
+                      setHtml(value);
+                    }}
+                    placeholder="HTML"
+                    minHeight="300px"
+                    style={{
+                      fontSize: localStorage.getItem("fontSizeCode")
+                        ? localStorage.getItem("fontSizeCode")
+                        : value,
+                    }}
                   />
-                </div>
+                  <div>
+                    <iframe
+                      className="pane"
+                      srcDoc={srcDoc}
+                      title="output"
+                      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+                      frameBorder="0"
+                      width="100%"
+                      height="100%"
+                      style={layout == "row" ? {"minHeight":"50vh"} : {"height":"100%"}}
+                    />
+                  </div>
+                </SimpleGrid>
               </Tabs.Tab>
               <Tabs.Tab label="CSS" icon={<BrandCss3 size={16} />} tabKey="css">
+              <SimpleGrid cols={layout === "row" ? 1 : 2}>
                 <CodeMirror
                   value={csss}
                   height="200px"
@@ -497,7 +524,11 @@ export default function Editor({ id }) {
                   }}
                   placeholder="CSS"
                   minHeight="300px"
-                  style={{ fontSize: value }}
+                  style={{
+                    fontSize: localStorage.getItem("fontSizeCode")
+                      ? localStorage.getItem("fontSizeCode")
+                      : value,
+                  }}
                 />
                 <div>
                   <iframe
@@ -508,14 +539,17 @@ export default function Editor({ id }) {
                     frameBorder="0"
                     width="100%"
                     height="100%"
+                    style={layout == "row" ? {"minHeight":"50vh"} : {"height":"100%"}}
                   />
                 </div>
+                </SimpleGrid>
               </Tabs.Tab>
               <Tabs.Tab
                 label="JAVASCRIPT"
                 icon={<BrandJavascript size={16} />}
                 tabKey="js"
               >
+                 <SimpleGrid cols={layout === "row" ? 1 : 2}>
                 <CodeMirror
                   value={jss}
                   height="200px"
@@ -526,7 +560,11 @@ export default function Editor({ id }) {
                   }}
                   placeholder="JAVASCRIPT"
                   minHeight="300px"
-                  style={{ fontSize: value }}
+                  style={{
+                    fontSize: localStorage.getItem("fontSizeCode")
+                      ? localStorage.getItem("fontSizeCode")
+                      : value,
+                  }}
                 />
                 <div>
                   <iframe
@@ -537,8 +575,10 @@ export default function Editor({ id }) {
                     frameBorder="0"
                     width="100%"
                     height="100%"
+                    style={layout == "row" ? {"minHeight":"50vh"} : {"height":"100%"}}
                   />
                 </div>
+                </SimpleGrid>
               </Tabs.Tab>
               <Tabs.Tab
                 label="FULL PREVIEW"
