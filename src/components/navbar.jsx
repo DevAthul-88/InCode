@@ -6,12 +6,12 @@ import {
   Text,
   Group,
   Menu,
-  Navbar
+  Navbar,
 } from "@mantine/core";
 import { useBooleanToggle } from "@mantine/hooks";
 import { Link } from "wouter";
 import db from "../db/db";
-import {User , Logout} from 'tabler-icons-react'
+import { User, Logout } from "tabler-icons-react";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -19,7 +19,7 @@ const useStyles = createStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     height: "100%",
-    padding:"2rem",
+    padding: "2rem",
   },
 
   links: {
@@ -76,58 +76,72 @@ export default function HeaderSimple() {
   }
   return (
     <Header height={60} className={classes.header}>
-
-        <Link href="/">
-          <Text
-            className="os"
-            color={"white"}
-            size="xl"
-            style={{ cursor: "pointer" }}
-          >
-            InCode
-          </Text>
-        </Link>
-        {db.auth.user() !== null && db.auth.user() !== undefined ? (
-          <Group>
-          
-            <Link
-              href={"/start"}
-              className={cx(classes.link, {
-                [classes.linkActive]: "active" === null,
-              })}
-            >
-              Start Project
-            </Link>
-            <Menu
-            
-          transition="rotate-right"
-          transitionDuration={100}
-          transitionTimingFunction="ease"
+      <Link href="/">
+        <Text
+          className="os"
+          color={"white"}
+          size="xl"
+          style={{ cursor: "pointer" }}
         >
-          <Menu.Item icon={<Logout size={14} />} onClick={logout}>Logout</Menu.Item>
-        </Menu>
-          </Group>
-        ) : (
-          <Group spacing={5} className={classes.links}>
-            <Link
-              href={"/signin"}
-              className={cx(classes.link, {
-                [classes.linkActive]: "active" === null,
-              })}
-            >
-              SignIn
-            </Link>
-            <Link
-              href={"/signup"}
-              className={cx(classes.link, {
-                [classes.linkActive]: "active" === null,
-              })}
-            >
-              SignUp
-            </Link>
-          </Group>
-        )}
-    
+          InCode
+        </Text>
+      </Link>
+      {db.auth.user() !== null && db.auth.user() !== undefined ? (
+        <Group>
+          <Link
+            href={"/sandbox"}
+            className={cx(classes.link, {
+              [classes.linkActive]: "active" === null,
+            })}
+          >
+            Sandbox
+          </Link>
+          <Link
+            href={"/start"}
+            className={cx(classes.link, {
+              [classes.linkActive]: "active" === null,
+            })}
+          >
+            Start Project
+          </Link>
+          <Menu
+            transition="rotate-right"
+            transitionDuration={100}
+            transitionTimingFunction="ease"
+          >
+            <Menu.Item icon={<Logout size={14} />} onClick={logout}>
+              Logout
+            </Menu.Item>
+          </Menu>
+        </Group>
+      ) : (
+        <Group spacing={5} className={classes.links}>
+          <Link
+            href={"/sandbox"}
+            className={cx(classes.link, {
+              [classes.linkActive]: "active" === null,
+            })}
+          >
+            Sandbox
+          </Link>
+          <Link
+            href={"/signin"}
+            className={cx(classes.link, {
+              [classes.linkActive]: "active" === null,
+            })}
+          >
+            SignIn
+          </Link>
+          <Link
+            href={"/signup"}
+            className={cx(classes.link, {
+              [classes.linkActive]: "active" === null,
+            })}
+          >
+            SignUp
+          </Link>
+        </Group>
+      )}
     </Header>
   );
 }

@@ -5,6 +5,8 @@ import Start from "./pages/start";
 import SignIn from "./pages/signin";
 import SignUp from "./pages/signup";
 import Notfound from "./pages/notfound";
+import Sandbox from "./pages/sandbox";
+
 
 
 function App() {
@@ -17,7 +19,9 @@ function App() {
         <Route path="/start" component={Start} />
         <Route path="/signin" component={SignIn} />
         <Route path="/signup" component={SignUp} />
+        <Route path='/sandbox' component={Sandbox} />
         <Route path='/:rest*' component={Notfound} />
+        
     </Switch>
   );
 }
